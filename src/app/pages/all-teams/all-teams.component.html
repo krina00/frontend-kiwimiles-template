@@ -1,0 +1,58 @@
+<div class="header bg-gradient-danger py-7 py-lg-8">
+  <div class="container">
+    <div class="header-body text-center mb-7">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-6">
+          <h2 class="text-white">TEAM LIST</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="separator separator-bottom separator-skew zindex-100">
+    <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+    </svg>
+  </div>
+</div>
+
+<div class="container mt--8 pb-5">
+  <div class="row justify-content-center">
+
+    <p-table *ngIf="teams" [resizableColumns]="true" [value]="teams" styleClass="p-datatable-striped">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:10%">#</th>
+          <th style="width:20%">Name</th>
+          <th style="width:20%">Created On</th>
+          <th style="width:15%"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" class="text-center" let-team let-i="rowIndex">
+        <tr>
+          <td style="width:10%">
+            {{i+1}}
+          </td>
+          <td *ngIf="!team.updatable" style="width:20%">
+            <img src={{team.groupPictureUrl}} style="height:inherit; width:8%;" />
+            {{team.name}}
+          </td>
+          <td *ngIf="team.updatable" style="width:20%">
+            <input pInputText id="teamName" class="p-inputtext-sm" [(ngModel)]="team.name"
+                   placeholder="team name" />
+          </td>
+          <td style="width:20%">{{team.createdOn}}</td>
+          <td *ngIf="!team.updatable" style="width:15%">
+            <i class="fa fa-info-circle m-3 text-blue" (click)="teamDetails(team.id)"></i>
+            <i class="fas fa-edit m-3 text-info" aria-hidden="true" (click)="editTeam(team.id)"></i>
+            <i class="fas fa-trash-alt m-3 text-danger" aria-hidden="true" (click)="deleteTeam(team.id)"></i>
+          </td>
+          <td *ngIf="team.updatable" style="width:15%">
+            <i class="fas fa-save m-3 text-blue" aria-hidden="true" (click)="updateTeam(team)"></i>
+            <i class="fa fa-times m-3 text-danger" (click)="closeEditTeam(team.id)"></i>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

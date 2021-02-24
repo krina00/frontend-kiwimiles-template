@@ -3,4 +3,5 @@ export class GroupDTO {
   name: string;
   updatable?: boolean = false;
   groupPictureUrl?: string;
+  createdOn?: string;
 }

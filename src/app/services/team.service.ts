@@ -20,6 +20,15 @@ export class TeamService extends BaseService {
     return httpOptions;
   }
   //teams
+  getAllMemberships(userId: number): Observable<object> {
+
+    return this.http.get(this.API_URL + `/users/${userId}/memberships`, this.getHttpOptions());
+  }
+
+  getAllAvailableTeams(): Observable<object> {    //SUDO
+
+    return this.http.get(this.API_URL + `/groups`, this.getHttpOptions());
+  }
   createTeam(teamName: string, userId: number): Observable<object> {
 
     return this.http.post(this.API_URL + `/users/${userId}/memberships`,
@@ -32,10 +41,6 @@ export class TeamService extends BaseService {
   getTeamDetails(teamId: number): Observable<object> {
 
     return this.http.get(this.API_URL + `/groups/${teamId}`, this.getHttpOptions());
-  }
-  getAllMemberships(userId: number): Observable<object> {
-
-    return this.http.get(this.API_URL + `/users/${userId}/memberships`, this.getHttpOptions());
   }
   updateTeam(teamId:number, teamName: string): Observable<object> {
 

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AllTeamsComponent } from '../../pages/all-teams/all-teams.component';
 import { UsersComponent } from '../../pages/all-users/users.component';
 import { ChangePasswordComponent } from '../../pages/changepassword/changepassword.component';
 import { DashboardComponent } from '../../pages/dashboard/dashboard.component';
@@ -21,5 +22,6 @@ export const AdminLayoutRoutes: Routes = [
   { path: 'password-settings', component: ChangePasswordComponent },
   { path: 'teams', component: TeamsComponent },
   { path: 'teams/:role/:teamId', component: TeamDetailsComponent },
-  //{ path: 'maps',           component: MapsComponent }
+  { path: 'all-teams', component: AllTeamsComponent },
+  //{ path: 'maps', component: MapsComponent }
 ];

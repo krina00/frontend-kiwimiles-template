@@ -26,6 +26,7 @@ import { BadgeModule } from 'primeng/badge';
 import { InviteDialogComponent } from '../../components/invite-dialog/invite-dialog.component';
 import { UsersComponent } from '../../pages/all-users/users.component';
 import { PeekUserComponent } from '../../pages/peek-user/peek-user.component';
+import { AllTeamsComponent } from '../../pages/all-teams/all-teams.component';
 
 @NgModule({
   imports: [
@@ -51,6 +52,7 @@ import { PeekUserComponent } from '../../pages/peek-user/peek-user.component';
     UserProfileComponent,
     TablesComponent,
     IconsComponent,
+    AllTeamsComponent,
     TeamsComponent,
     TeamDetailsComponent,
     InviteDialogComponent,
