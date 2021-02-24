@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import Chart from 'chart.js';
-
+import { UserService } from '../../services/user.service';
+import { User } from '../../user';
 // core components
 import {
   chartOptions,
@@ -16,13 +17,21 @@ import {
 })
 export class DashboardComponent implements OnInit {
 
+  constructor(
+    private userService: UserService,
+  ) { }
+
   public datasets: any;
   public data: any;
   public salesChart;
   public clicked: boolean = true;
   public clicked1: boolean = false;
+  private user: User;
 
   ngOnInit() {
+    const userId: number = JSON.parse(localStorage.getItem('id'));
+    this.userService.getUserProfile(userId).subscribe(userDetails => {
+    });
 
     this.datasets = [
       [0, 20, 10, 30, 15, 40, 20, 60, 60],

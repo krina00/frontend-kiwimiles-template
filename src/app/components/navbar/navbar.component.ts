@@ -1,7 +1,8 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
-import { ROUTES } from '../sidebar/sidebar.component';
-import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { Location } from '@angular/common';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthenticationService, UserService } from '../../services';
+import { ROUTES } from '../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-navbar',
@@ -12,12 +13,33 @@ export class NavbarComponent implements OnInit {
   public focus;
   public listTitles: any[];
   public location: Location;
-  constructor(location: Location,  private element: ElementRef, private router: Router) {
+  private userName: string;
+  constructor(location: Location,
+    private element: ElementRef,
+    private router: Router,
+    private userService: UserService,
+    private authenticationService: AuthenticationService
+  ) {
     this.location = location;
   }
 
   ngOnInit() {
     this.listTitles = ROUTES.filter(listTitle => listTitle);
+    if (localStorage.getItem('id') && localStorage.getItem('id')!= undefined) {
+      const userId: number = JSON.parse(localStorage.getItem('id'));
+      this.userService.getUserProfile(userId).subscribe(userDetails => {
+        if (!userDetails) {
+          console.log('user details not found!');
+        }
+        else {
+          this.userName = userDetails.name ? userDetails.name : 'unknown';
+        }
+      });
+    }
+    else {
+      console.log('Unable to find user')
+    }
+    
   }
   getTitle(){
     var titlee = this.location.prepareExternalUrl(this.location.path());
@@ -32,5 +54,8 @@ export class NavbarComponent implements OnInit {
     }
     return 'Dashboard';
   }
-
+  async logout() {
+    await this.authenticationService.logout().toPromise();
+    this.router.navigate(['/login']);
+  }
 }

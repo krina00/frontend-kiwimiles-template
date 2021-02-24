@@ -1,0 +1,18 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\app",
+    "\\app\\pages",
+    "\\app\\pages\\maps",
+    "\\app\\pages\\register",
+    "\\app\\pages\\tables",
+    "\\app\\pages\\user-profile",
+    "\\app\\services",
+    "\\assets",
+    "\\assets\\img",
+    "\\assets\\img\\brand",
+    "\\environments"
+  ],
+  "SelectedNode": "\\app\\pages\\register\\register.component.ts",
+  "PreviewInSolutionExplorer": false
+}

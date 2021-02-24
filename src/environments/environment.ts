@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  API_URL: "http://localhost:8080/v1",
+  JWT_SECRET: "kiwimiles"
 };
 
 /*

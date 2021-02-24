@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from '../../services';
 
 declare interface RouteInfo {
-    path: string;
-    title: string;
-    icon: string;
-    class: string;
+  path: string;
+  title: string;
+  icon: string;
+  class: string;
 }
+export const SUDO_ROUTES: RouteInfo[] = [
+  { path: '/admin/dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },
+  { path: '/admin/users', title: 'All Users', icon: 'pi pi-users text-blue font-weight-bold', class: '' },    
+  //{ path: '/admin/all-teams', title: 'All Teams', icon: 'fa fa-users text-green', class: '' },
+];
+
 export const ROUTES: RouteInfo[] = [
-    { path: '/dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-primary', class: '' },
-    { path: '/icons', title: 'Icons',  icon:'ni-planet text-blue', class: '' },
-    { path: '/maps', title: 'Maps',  icon:'ni-pin-3 text-orange', class: '' },
-    { path: '/user-profile', title: 'User profile',  icon:'ni-single-02 text-yellow', class: '' },
-    { path: '/tables', title: 'Tables',  icon:'ni-bullet-list-67 text-red', class: '' },
-    { path: '/login', title: 'Login',  icon:'ni-key-25 text-info', class: '' },
-    { path: '/register', title: 'Register',  icon:'ni-circle-08 text-pink', class: '' }
+  { path: '/admin/dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },
 ];
 
 @Component({
@@ -27,12 +28,26 @@ export class SidebarComponent implements OnInit {
   public menuItems: any[];
   public isCollapsed = true;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private userService: UserService
+  ) { }
 
-  ngOnInit() {
-    this.menuItems = ROUTES.filter(menuItem => menuItem);
-    this.router.events.subscribe((event) => {
-      this.isCollapsed = true;
-   });
+  async ngOnInit() {
+    const userId: number = JSON.parse(localStorage.getItem('id'));
+    const userDetails = await this.userService.getUserProfile(userId).toPromise();
+    if (userDetails.role == 'SUDO') {
+      this.menuItems = SUDO_ROUTES.filter(menuItem => menuItem);
+      this.router.events.subscribe((event) => {
+        this.isCollapsed = true;
+      });
+    }
+    else if (userDetails.role == 'USER') {
+      this.menuItems = ROUTES.filter(menuItem => menuItem);
+      this.router.events.subscribe((event) => {
+        this.isCollapsed = true;
+      });
+    }
+    
   }
 }

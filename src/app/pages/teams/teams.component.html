@@ -1,0 +1,75 @@
+<div class="header bg-gradient-danger py-7 py-lg-8">
+  <div class="container">
+    <div class="header-body text-center mb-7">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-6">
+          <h2 class="text-white">{{userName}}'s Teams</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="separator separator-bottom separator-skew zindex-100">
+    <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+    </svg>
+  </div>
+</div>
+
+<div class="container mt--8 pb-5">
+  <div class="row justify-content-center">
+
+    <p-table *ngIf="memberships" [value]="memberships" styleClass="p-datatable-striped">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Joined</th>
+          <th></th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" class="text-center" let-membership let-i="rowIndex">
+        <tr>
+          <td>
+            {{i+1}}
+          </td>
+          <td *ngIf="!membership.group.updatable">
+            <img src={{membership.group?.groupPictureUrl}} style="height:inherit; width:8%;" />
+            {{membership.group?.name}}
+          </td>
+          <td *ngIf="membership.group.updatable">
+            <input pInputText id="groupName" class="p-inputtext-sm ml-2" [(ngModel)]="membership.group.name"
+                   placeholder="group name" />
+          </td>
+          <td>{{membership.role}}</td>
+          <td>{{membership.since}}</td>
+          <td *ngIf="!membership.group.updatable">
+            <i *ngIf="hasPermission(membership.role, 'VIEW')" class="fa fa-info-circle m-4 text-blue" (click)="teamDetails(membership.group.id, membership.role)"></i>
+            <i *ngIf="hasPermission(membership.role, 'UPDATE')" class="fas fa-edit m-4 text-info" aria-hidden="true" (click)="editTeam(membership.group.id)"></i>
+            <i *ngIf="hasPermission(membership.role, 'DELETE')" class="fa fa-trash-alt m-4 text-danger" (click)="deleteTeam(membership.group.id)"></i>
+          </td>
+          <td *ngIf="membership.group.updatable">
+           
+            <i class="fas fa-save m-4 text-blue" aria-hidden="true" (click)="updateTeam(membership.group.id)"></i>
+            <i class="fa fa-times m-4 text-danger" (click)="closeEditTeam(membership.group.id)"></i>
+
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <div>
+      <span class="mr-4">
+        <label for="teamName" class="mr-2">Team Name:</label>
+        <input pInputText id="teamName" class="p-inputtext" [(ngModel)]="createTeamName"
+               placeholder="i.e. xyz" />
+        <span *ngIf="error" class="text-danger font-weight-bold m-2">{{error}}</span>
+      </span>
+      <span class="ml-4">
+        <button pButton type="button" class="p-button p-button-help p-button-rounded mt-4"
+                label="Add new team" (click)="createTeam()">
+        </button>
+      </span>
+    </div>
+  </div>
+</div>

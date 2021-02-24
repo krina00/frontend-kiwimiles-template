@@ -1,0 +1,16 @@
+<div class="px-4">
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <h3>We've sent you otp on your Registered Email. Kindly check your mail!</h3>
+      <h4 class="my-3">One-Time Password:</h4>
+      <input pInputText class="p-inputtext-lg" [(ngModel)]="otpCode" maxlength="6"
+             placeholder="Enter one-time password" />
+      <br />
+      <br />
+      <button class="btn btn-default" (click)="closeDialog()">Enable 2FA</button>
+    </div>
+  </div>
+</div>
+
+
+

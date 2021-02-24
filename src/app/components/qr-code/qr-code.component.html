@@ -1,0 +1,17 @@
+<h3 style="text-align:left">Scan this QR code in your Authenticator App to enable two-factor authentication.</h3>
+<div class="px-4">
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <img style="-webkit-user-select: none;margin: auto;background-color: hsl(0, 0%, 90%);transition: background-color 3000ms;" src={{qrCodeLink}}>
+      <h3 class="my-3">One-Time Password:</h3>
+      <input pInputText class="p-inputtext-lg" [(ngModel)]="otpCode" maxlength="6"
+             placeholder="Enter one-time password" />
+      <br />
+      <br />
+      <button class="btn btn-default" (click)="closeDialog()">Enable 2FA</button>
+    </div>
+  </div>
+</div>
+
+
+
