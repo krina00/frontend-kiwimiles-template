@@ -12,9 +12,6 @@ export class AuthenticationService extends BaseService {
 
   getHttpOptions(): { headers: HttpHeaders } {
     const token: string = localStorage.getItem('token');
-    if (!token) {
-      history.go(0);
-    }
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
         .set('authorization', 'Bearer ' + token)
@@ -107,7 +104,7 @@ export class AuthenticationService extends BaseService {
     return this.http.post(this.API_URL + '/api/user/password', user, this.getHttpOptions());
   }
 
-  checkToken(token: string) {
+  checkToken(token: string): Observable<any>{
     return this.http.post(this.API_URL + '/api/user/checktoken', { token: token }, this.getHttpOptions());
   }
 
@@ -115,7 +112,11 @@ export class AuthenticationService extends BaseService {
     return this.http.post(this.API_URL + '/auth/forgot-password', { email: email }, this.getHttpOptions())
   }
 
-  changePassword(password: string, token: string) {
+  changePassword(userId: number, currentPassword: string, newPassword: string): Observable<any> {
+    return this.http.patch(this.API_URL + `/users/${userId}`, { currentPassword: currentPassword, newPassword: newPassword }, this.getHttpOptions())
+  }
+
+  resetPassword(password: string, token: string):  Observable<any> {
     return this.http.post(this.API_URL + '/auth/reset-password', { password: password, token: token }, this.getHttpOptions())
   }
 

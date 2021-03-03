@@ -8,10 +8,10 @@ import { AuthenticationService } from '../../services/authentication.service';
   styleUrls: ['./forgotpassword.component.css']
 })
 export class ForgotpasswordComponent implements OnInit {
-  Userform: FormGroup;
-  submitted = false;
-  error: string;
-  active = true;
+  private Userform: FormGroup;
+  private submitted: boolean = false;
+  private error: string;
+  private active: boolean = true;
 
 
   constructor(private formBuilder: FormBuilder,
@@ -26,16 +26,15 @@ export class ForgotpasswordComponent implements OnInit {
 
     })
   }
-  onSubmit() {
+  async onSubmit() {
     this.submitted = true;
     if (!this.Userform.invalid) {
-      this.authenticationService.forgotpassword(this.Userform.value.email).subscribe(
-        data => { this.active = false; },
-        error => {
-          this.error = error;
-          console.log(error.message);
-        }
-      );
+      await this.authenticationService.forgotpassword(this.Userform.value.email).toPromise()
+      .catch(error => {
+        this.error = error;
+        console.log(error.message);
+      });
+      this.active = false;
     }
     else {
       console.error('Invalid data!');

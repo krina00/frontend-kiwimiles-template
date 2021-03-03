@@ -12,6 +12,7 @@ import { EmailOTPDialogComponent } from '../../components/email-otp-dialog/email
 import { QRCodeComponent } from '../../components/qr-code/qr-code.component';
 import { SmsOTPDialogComponent } from '../../components/sms-otp-dialog/sms-otp-dialog.component';
 import { ChangePasswordComponent } from '../../pages/changepassword/changepassword.component';
+import { ResetPasswordComponent } from '../../pages/resetpassword/resetpassword.component';
 import { EmailNotificationComponent } from '../../pages/email-notification/email-notification.component';
 import { ForgotpasswordComponent } from '../../pages/forgotpassword/forgotpassword.component';
 import { LoginComponent } from '../../pages/login/login.component';
@@ -19,6 +20,7 @@ import { MultiFactorLoginComponent } from '../../pages/mfa-login/mfa-login.compo
 import { PasswordSettingsComponent } from '../../pages/password-settings/password-settings.component';
 import { RegisterComponent } from '../../pages/register/register.component';
 import { AuthLayoutRoutes } from './auth-layout.routing';
+import { PasswordResetPopupComponent } from '../../pages/password-reset-popup/password-reset-popup.component';
 
 @NgModule({
   imports: [
@@ -40,10 +42,12 @@ import { AuthLayoutRoutes } from './auth-layout.routing';
     EmailNotificationComponent,
     ForgotpasswordComponent,
     ChangePasswordComponent,
+    ResetPasswordComponent,
     PasswordSettingsComponent,
     QRCodeComponent,
     SmsOTPDialogComponent,
-    EmailOTPDialogComponent
+    EmailOTPDialogComponent,
+    PasswordResetPopupComponent
   ],
   exports: [
     ChangePasswordComponent

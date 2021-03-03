@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services';
 import { AuthenticationService } from '../../services/authentication.service';
 
@@ -16,15 +16,14 @@ interface mfaMethodDTO {
 })
 export class ChangePasswordComponent implements OnInit {
 
+  userId: number
   resetPasswordForm: FormGroup;
   submitted = false;
   setPassword = true;
-
   tokenRetrived: string;
   requireCurrentPassword: boolean = true;
   loggedInFlag: boolean = true;
   currentUserId: number = +localStorage.getItem('id');
-
   setting: boolean = false;
   mfaEnabled: 'enabled' | 'disabled';
   mfaMethods: mfaMethodDTO[] = [
@@ -33,7 +32,6 @@ export class ChangePasswordComponent implements OnInit {
     { name: 'Email OTP', code: 'EMAIL' },
   ];
   twoFactorType: 'TOTP' | 'SMS' | 'EMAIL' = 'TOTP';
-
   errorMessage: string;
   error;
 
@@ -41,7 +39,8 @@ export class ChangePasswordComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
     private activatedRoute: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) {
     this.activatedRoute.queryParams.subscribe(params => {
       this.tokenRetrived = params['token'] ?? null;
@@ -64,25 +63,15 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.requireCurrentPassword) {
-      this.resetPasswordForm = this.formBuilder.group({
-        currentPassword: ['', Validators.required,],
-        newPassword: ['', [Validators.required, Validators.minLength(6)]],
-        confirmPassword: ['', Validators.required],
-      }, {
-        validator: this.mustMatch('newPassword', 'confirmPassword')
+    this.userId = JSON.parse(localStorage.getItem('id'));
+    this.resetPasswordForm = this.formBuilder.group({
+      currentPassword: ['', Validators.required,],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required],
+    }, {
+      validator: this.mustMatch('newPassword', 'confirmPassword')
+    })
 
-      })
-    }
-    else {
-      this.resetPasswordForm = this.formBuilder.group({
-        newPassword: ['', [Validators.required, Validators.minLength(6)]],
-        confirmPassword: ['', Validators.required],
-      }, {
-        validator: this.mustMatch('newPassword', 'confirmPassword')
-
-      })
-    }
   }
 
   private enable2FA(): void {
@@ -108,13 +97,21 @@ export class ChangePasswordComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
-    console.log(this.resetPasswordForm);
     if (this.resetPasswordForm.invalid) {
       console.error('Invalid Data');
     }
     else {
-      this.authenticationService.changePassword(this.resetPasswordForm.value.newPassword, this.tokenRetrived).subscribe(
-        data => { this.setPassword = false; },
+      this.authenticationService.changePassword(
+        this.userId,
+        this.resetPasswordForm.value.currentPassword,
+        this.resetPasswordForm.value.newPassword).subscribe(
+        data => {
+           this.setPassword = false;
+           this.authenticationService.logout().subscribe(()=>{
+            this.router.navigate(['/password-reset-window']);
+           });
+           
+        },
         error => {
           this.error = error;
           console.error(error);
