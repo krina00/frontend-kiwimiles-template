@@ -3,7 +3,13 @@
     "",
     "\\src",
     "\\src\\app",
-    "\\src\\app\\pages"
+    "\\src\\app\\components",
+    "\\src\\app\\constants",
+    "\\src\\app\\dto",
+    "\\src\\app\\layouts",
+    "\\src\\app\\pages",
+    "\\src\\app\\services"
   ],
+  "SelectedNode": "\\src\\app\\services\\team.service.ts",
   "PreviewInSolutionExplorer": false
 }
