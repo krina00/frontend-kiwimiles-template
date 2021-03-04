@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserDTO } from '../../dto/user.dto';
-import { UserService } from '../../services';
 import { ActivatedRoute } from '@angular/router';
+import { SudoService } from 'src/app/services/sudo.service';
 
 @Component({
   selector: 'app-peek-user',
@@ -14,7 +14,7 @@ export class PeekUserComponent implements OnInit {
   user: UserDTO;
 
   constructor(
-    private readonly userService: UserService,
+    private readonly sudoService: SudoService,
     private readonly activatedRoute: ActivatedRoute,
   ) {
     this.activatedRoute.params.subscribe((data: { userId: number }) => {
@@ -29,7 +29,7 @@ export class PeekUserComponent implements OnInit {
 
   async getUserEmailId() {
     if (this.userId) {
-      const emailData: { email: string }[] = await this.userService.getuserEmailId(this.userId).toPromise();
+      const emailData: { email: string }[] = await this.sudoService.getuserEmailId(this.userId).toPromise();
       if (emailData.length > 0) {
         this.user.email = emailData[0].email;
       }
@@ -43,7 +43,7 @@ export class PeekUserComponent implements OnInit {
   }
 
   async getUserProfile() {
-    const userDetails = await this.userService.getUserProfile(this.userId).toPromise();
+    const userDetails = await this.sudoService.getUserProfile(this.userId).toPromise();
     console.log(userDetails);
     if (!userDetails) {
       console.log('user details not found!');

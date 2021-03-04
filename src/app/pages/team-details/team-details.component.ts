@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DialogService } from 'primeng/dynamicdialog';
+import { UserService } from 'src/app/services';
 import { InviteDialogComponent } from '../../components/invite-dialog/invite-dialog.component';
 import { DropdownDTO } from '../../dto/dropdown.dto';
 import { MemberDTO } from '../../dto/member.dto';
@@ -30,17 +31,20 @@ export class TeamDetailsComponent implements OnInit {
     private dialogService: DialogService,
     private readonly teamService: TeamService,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly userService: UserService
 
   ) {
-    this.userId = +localStorage.getItem('id');
+
     this.activatedRoute.params.subscribe((data: { teamId: number, role: string }) => {
       this.teamId = data.teamId;
       this.userRoleInTeam = data.role;
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const user: {id: number} = await this.userService.getUserProfile().toPromise();
+    this.userId = user.id;
     this.teamService.getTeamDetails(this.teamId).subscribe((team: { name: string }) => {
       this.teamName = team.name;
     })
@@ -160,9 +164,9 @@ export class TeamDetailsComponent implements OnInit {
     this.getAllMembers();
   }
 
-  deleteMember(userId: number): void {
+  deleteMember(memberId: number): void {
 
-    this.teamService.deleteMember(userId, this.teamId).subscribe(() => { this.getAllMembers() },
+    this.teamService.deleteMember(memberId, this.teamId).subscribe(() => { this.getAllMembers() },
       err => { console.error('user cannot be deleted') });
   }
 

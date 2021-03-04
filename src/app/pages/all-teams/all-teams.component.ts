@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { SudoService } from 'src/app/services/sudo.service';
 import { DropdownDTO } from '../../dto/dropdown.dto';
 import { GroupDTO } from '../../dto/group.dto';
 import { AuthenticationService, UserService } from '../../services';
@@ -18,10 +19,9 @@ export class AllTeamsComponent implements OnInit {
   genders: DropdownDTO[];
 
   constructor(
-    private readonly authenticationService: AuthenticationService,
-    private readonly userService: UserService,
     private readonly teamService: TeamService,
-    private readonly router: Router,
+    private readonly sudoService: SudoService,
+    private readonly router: Router
   ) {
 
   }
@@ -29,7 +29,6 @@ export class AllTeamsComponent implements OnInit {
   ngOnInit() {
     this.getAllTeams();
   }
-
 
   editTeam(teamId: number): void {
     const index: number = this.teams.findIndex(team => team.id == teamId);
@@ -50,8 +49,7 @@ export class AllTeamsComponent implements OnInit {
   }
 
   getAllTeams(): void {
-    this.teamService.getAllAvailableTeams().subscribe((teamInformation: any[]) => {
-      console.log(teamInformation);
+    this.sudoService.getAllAvailableTeams().subscribe((teamInformation: any[]) => {
       if (teamInformation && teamInformation.length > 0) {
         this.teams = [];
         teamInformation.forEach((team) => {
@@ -69,7 +67,6 @@ export class AllTeamsComponent implements OnInit {
   }
 
   teamDetails(teamId: number): void {
-    console.log(teamId);
     this.router.navigate([`/admin/teams/SUDO/${teamId}`]);
   }
 

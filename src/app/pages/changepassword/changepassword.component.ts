@@ -15,15 +15,13 @@ interface mfaMethodDTO {
   styleUrls: ['./changepassword.component.scss'],
 })
 export class ChangePasswordComponent implements OnInit {
-
-  userId: number
+  
   resetPasswordForm: FormGroup;
   submitted = false;
   setPassword = true;
   tokenRetrived: string;
   requireCurrentPassword: boolean = true;
   loggedInFlag: boolean = true;
-  currentUserId: number = +localStorage.getItem('id');
   setting: boolean = false;
   mfaEnabled: 'enabled' | 'disabled';
   mfaMethods: mfaMethodDTO[] = [
@@ -52,7 +50,7 @@ export class ChangePasswordComponent implements OnInit {
         this.tokenRetrived = localStorage.getItem('refreshToken');
       }
     });
-    this.userService.getUserProfile(this.currentUserId).subscribe((data) => {
+    this.userService.getUserProfile().subscribe((data) => {
       if (data.twoFactorMethod == 'NONE') {
         this.mfaEnabled = 'disabled';
       }
@@ -63,7 +61,6 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userId = JSON.parse(localStorage.getItem('id'));
     this.resetPasswordForm = this.formBuilder.group({
       currentPassword: ['', Validators.required,],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
@@ -89,7 +86,7 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   private disable2FA(): void {
-    this.authenticationService.disable2FA(this.currentUserId).subscribe(() => {
+    this.authenticationService.disable2FA().subscribe(() => {
       this.mfaEnabled = 'disabled';
     });
     this.setting = false;
@@ -102,7 +99,6 @@ export class ChangePasswordComponent implements OnInit {
     }
     else {
       this.authenticationService.changePassword(
-        this.userId,
         this.resetPasswordForm.value.currentPassword,
         this.resetPasswordForm.value.newPassword).subscribe(
         data => {

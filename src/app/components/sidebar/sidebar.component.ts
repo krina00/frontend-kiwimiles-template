@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../../services';
+import { AuthenticationService, UserService } from '../../services';
 
 declare interface RouteInfo {
   path: string;
@@ -30,12 +30,12 @@ export class SidebarComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private authenticationService: AuthenticationService
   ) { }
 
   async ngOnInit() {
-    const userId: number = JSON.parse(localStorage.getItem('id'));
-    const userDetails = await this.userService.getUserProfile(userId).toPromise();
+    const userDetails = await this.userService.getUserProfile().toPromise();
     if (userDetails.role == 'SUDO') {
       this.menuItems = SUDO_ROUTES.filter(menuItem => menuItem);
       this.router.events.subscribe((event) => {
@@ -48,6 +48,10 @@ export class SidebarComponent implements OnInit {
         this.isCollapsed = true;
       });
     }
-    
+  }
+
+  async logout() {
+    await this.authenticationService.logout().toPromise();
+    this.router.navigate(['/login']);
   }
 }

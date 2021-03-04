@@ -9,12 +9,12 @@ import { MultiFactorLoginComponent } from '../../pages/mfa-login/mfa-login.compo
 import { RegisterComponent } from '../../pages/register/register.component';
 
 export const AuthLayoutRoutes: Routes = [
-  { path: 'login', component: LoginComponent },
+  { path: 'auth/link/login', component: LoginComponent },
   { path: 'otp', component: MultiFactorLoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotpasswordComponent },
   { path: 'change-password', component: ChangePasswordComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'auth/link/reset-password', component: ResetPasswordComponent },
   { path: 'email-notification', component: EmailNotificationComponent },
   { path: 'password-reset-window', component: PasswordResetPopupComponent },
 ];

@@ -21,12 +21,7 @@ export class SmsOTPDialogComponent implements OnInit {
   ngOnInit() {
   }
   sendPhone() {
-    const userId: number = +localStorage.getItem('id');
-    if (!userId) {
-      console.error('userId not found');
-      return;
-    }
-    this.authenticationService.enableSms2FA(userId, this.phoneNumber).subscribe(() => {
+    this.authenticationService.enableSms2FA(this.phoneNumber).subscribe(() => {
       this.enableCodeInput = true;
     });
   }

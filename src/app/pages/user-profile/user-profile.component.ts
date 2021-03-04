@@ -14,7 +14,6 @@ interface GenderDTO {
 })
 export class UserProfileComponent implements OnInit {
 
-  userId: number;
   user: UserDTO;
   editable: boolean = false;
   genders: GenderDTO[] = [
@@ -26,66 +25,53 @@ export class UserProfileComponent implements OnInit {
 
   constructor(
     private userService: UserService
-  ) {
-    this.userId = +localStorage.getItem('id') ?? null;
-  }
+  ) { }
 
   async ngOnInit() {
     await this.getUserProfile();
     await this.getUserEmailId();
   }
 
-  async getUserEmailId() {
-    if (this.userId) {
-      const emailData: {email:string}[] = await this.userService.getuserEmailId(this.userId).toPromise();
-      if (emailData.length > 0) {
-        this.user.email = emailData[0].email;
-      }
-      else {
-        console.error('No emails found');
-      }
+  private async getUserEmailId() {
+    const emailData: { email: string }[] = await this.userService.getuserEmailId().toPromise();
+    if (emailData.length > 0) {
+      this.user.email = emailData[0].email;
     }
     else {
-      console.error('user id not found');
+      console.error('No emails found');
     }
   }
 
-  async getUserProfile() {
-    if (localStorage.getItem('id') && localStorage.getItem('id') != undefined) {
-      const userId: number = JSON.parse(localStorage.getItem('id'));
-      const userDetails = await this.userService.getUserProfile(userId).toPromise();
-      console.log(userDetails);
-      if (!userDetails) {
-        console.log('user details not found!');
-      }
-      else {
-        this.user = {
-          name: userDetails.name,
-          email: null,
-          role: userDetails.role,
-          gender: userDetails.gender,
-          mfaMethod: userDetails.twoFactorMethod,
-          contactNo: userDetails.twoFactorPhone,
-          country: userDetails.countryCode,
-          isDetectLocationOnLogin: userDetails.checkLocationOnLogin,
-          isMFA: userDetails.twoFactorMethod == 'NONE' ? false: true,
-          isNotifications: userDetails.notificationEmail == 'NONE' ? false: true,
-          ispasswordLess: false
-        }
-      }
+  private async getUserProfile() {
+    const userDetails = await this.userService.getUserProfile().toPromise();
+    console.log(userDetails);
+    if (!userDetails) {
+      console.log('user details not found!');
     }
     else {
-      console.log('Unable to find user')
+      this.user = {
+        name: userDetails.name,
+        email: null,
+        role: userDetails.role,
+        gender: userDetails.gender,
+        mfaMethod: userDetails.twoFactorMethod,
+        contactNo: userDetails.twoFactorPhone,
+        country: userDetails.countryCode,
+        isDetectLocationOnLogin: userDetails.checkLocationOnLogin,
+        isMFA: userDetails.twoFactorMethod == 'NONE' ? false : true,
+        isNotifications: userDetails.notificationEmail == 'NONE' ? false : true,
+        ispasswordLess: false
+      }
     }
   }
 
-  async stopEditing() {
+  private async stopEditing() {
     await this.getUserProfile();
     await this.getUserEmailId();
     this.editable = false;
   }
 
-  updateUser() {
+  private updateUser() {
     this.userService.updateUserProfile(this.user).subscribe(
       () => {
         this.editable = false;

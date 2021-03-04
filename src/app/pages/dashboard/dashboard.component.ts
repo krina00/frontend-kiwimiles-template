@@ -29,8 +29,7 @@ export class DashboardComponent implements OnInit {
   private user: User;
 
   ngOnInit() {
-    const userId: number = JSON.parse(localStorage.getItem('id'));
-    this.userService.getUserProfile(userId).subscribe(userDetails => {
+    this.userService.getUserProfile().subscribe(userDetails => {
     });
 
     this.datasets = [

@@ -25,32 +25,26 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.listTitles = ROUTES.filter(listTitle => listTitle);
-    if (localStorage.getItem('id') && localStorage.getItem('id')!= undefined) {
-      const userId: number = JSON.parse(localStorage.getItem('id'));
-      this.userService.getUserProfile(userId).subscribe(userDetails => {
-        if (!userDetails) {
-          console.log('user details not found!');
-        }
-        else {
-          this.userName = userDetails.name ? userDetails.name : 'unknown';
-        }
-      });
-    }
-    else {
-      console.log('Unable to find user')
-    }
-    
+    this.userService.getUserProfile().subscribe(userDetails => {
+      if (!userDetails) {
+        console.log('user details not found!');
+      }
+      else {
+        this.userName = userDetails.name ? userDetails.name : 'unknown';
+      }
+    });
+
   }
-  getTitle(){
-    var titlee = this.location.prepareExternalUrl(this.location.path());
-    if(titlee.charAt(0) === '#'){
-        titlee = titlee.slice( 1 );
+  getTitle() {
+    var title = this.location.prepareExternalUrl(this.location.path());
+    if (title.charAt(0) === '#') {
+      title = title.slice(1);
     }
 
-    for(var item = 0; item < this.listTitles.length; item++){
-        if(this.listTitles[item].path === titlee){
-            return this.listTitles[item].title;
-        }
+    for (var item = 0; item < this.listTitles.length; item++) {
+      if (this.listTitles[item].path === title) {
+        return this.listTitles[item].title;
+      }
     }
     return 'Dashboard';
   }

@@ -14,7 +14,6 @@ export class PasswordSettingsComponent implements OnInit {
 
   retrievedQRCode;
   showQr: boolean = false;
-  currentUserId: number = +localStorage.getItem('id');
   @Input() twoFactorType: 'TOTP' | 'SMS' | 'EMAIL';
   @Output() successFlagEmitter = new EventEmitter<boolean>();
   errorMessage: string;
@@ -48,7 +47,7 @@ export class PasswordSettingsComponent implements OnInit {
   }
 
   private enableQR2FA(): void {
-    this.authenticationService.enableTotp2FA(this.currentUserId).subscribe((image) => {
+    this.authenticationService.enableTotp2FA().subscribe((image) => {
       this.retrievedQRCode = image.img;
       const ref = this.dialogService.open(QRCodeComponent, {
         data: {
@@ -96,7 +95,7 @@ export class PasswordSettingsComponent implements OnInit {
   private sendTOtp(otpCode: number): void {
     this.showQr = false;
     if (otpCode) {
-      this.authenticationService.sendTotp(this.currentUserId, otpCode).subscribe((backupCodes) => {
+      this.authenticationService.sendTotp(otpCode).subscribe((backupCodes) => {
         console.log(backupCodes);
         this.errorMessage = null;
         this.successFlagEmitter.emit(true);
@@ -112,7 +111,7 @@ export class PasswordSettingsComponent implements OnInit {
 
   private sendSmsOtp(otpCode: number): void {
     if (otpCode) {
-      this.authenticationService.sendSmsOtp(this.currentUserId, otpCode).subscribe((backupCodes) => {
+      this.authenticationService.sendSmsOtp(otpCode).subscribe((backupCodes) => {
         console.log(backupCodes);
         this.errorMessage = null;
         this.successFlagEmitter.emit(true);
@@ -128,7 +127,7 @@ export class PasswordSettingsComponent implements OnInit {
 
   private sendEmailOtp(otpCode: number): void {
     if (otpCode) {
-      this.authenticationService.sendEmailOtp(this.currentUserId, otpCode).subscribe((backupCodes) => {
+      this.authenticationService.sendEmailOtp(otpCode).subscribe((backupCodes) => {
         console.log(backupCodes);
         this.errorMessage = null;
         this.successFlagEmitter.emit(true);

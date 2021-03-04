@@ -13,7 +13,6 @@ export class ResetPasswordComponent implements OnInit {
     submitted = false;
     setPassword = true;
     tokenRetrived: string;
-    currentUserId: number = +localStorage.getItem('id');
     errorMessage: string;
     error;
 

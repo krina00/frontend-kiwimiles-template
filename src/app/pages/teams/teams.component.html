@@ -8,11 +8,6 @@
       </div>
     </div>
   </div>
-  <div class="separator separator-bottom separator-skew zindex-100">
-    <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-      <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-    </svg>
-  </div>
 </div>
 
 <div class="container mt--8 pb-5">
@@ -44,7 +39,7 @@
           </td>
           <td>{{membership.role}}</td>
           <td>{{membership.since}}</td>
-          <td *ngIf="!membership.group.updatable">
+          <td *ngIf="!membership.group.updatable" class="text-left">
             <i *ngIf="hasPermission(membership.role, 'VIEW')" class="fa fa-info-circle m-4 text-blue" (click)="teamDetails(membership.group.id, membership.role)"></i>
             <i *ngIf="hasPermission(membership.role, 'UPDATE')" class="fas fa-edit m-4 text-info" aria-hidden="true" (click)="editTeam(membership.group.id)"></i>
             <i *ngIf="hasPermission(membership.role, 'DELETE')" class="fa fa-trash-alt m-4 text-danger" (click)="deleteTeam(membership.group.id)"></i>
@@ -60,7 +55,7 @@
     </p-table>
     <div>
       <span class="mr-4">
-        <label for="teamName" class="mr-2">Team Name:</label>
+        <label for="teamName" class="mr-2 text-white">Team Name:</label>
         <input pInputText id="teamName" class="p-inputtext" [(ngModel)]="createTeamName"
                placeholder="i.e. xyz" />
         <span *ngIf="error" class="text-danger font-weight-bold m-2">{{error}}</span>

@@ -19,8 +19,7 @@ export class EmailOTPDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    const userId: number = +localStorage.getItem('id');
-    this.authenticationService.enableEmail2FA(userId).subscribe();
+    this.authenticationService.enableEmail2FA().subscribe();
   }
   closeDialog() {
     this.ref.close(this.otpCode);

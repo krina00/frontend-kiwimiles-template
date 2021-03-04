@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { SudoService } from 'src/app/services/sudo.service';
 import { DropdownDTO } from '../../dto/dropdown.dto';
 import { DisplayUserDTO, UpdateUserDTO } from '../../dto/user.dto';
-import { AuthenticationService, UserService } from '../../services';
-import { TeamService } from '../../services/team.service';
 
 @Component({
   selector: 'app-users',
@@ -18,9 +17,7 @@ export class UsersComponent implements OnInit {
   genders: DropdownDTO[];
 
   constructor(
-    private readonly authenticationService: AuthenticationService,
-    private readonly userService: UserService,
-    private readonly teamService: TeamService,
+    private readonly sudoService: SudoService,
     private readonly router: Router,
   ) {
 
@@ -32,7 +29,7 @@ export class UsersComponent implements OnInit {
     this.setStaticGenders();
   }
 
-  setStaticRoles() {
+  private setStaticRoles() {
     this.userRoles = [
       {
         name: "Super Domain",
@@ -45,7 +42,7 @@ export class UsersComponent implements OnInit {
     ]
   }
 
-  setStaticGenders() {
+  private setStaticGenders() {
     this.genders = [
       {
         name: "Male",
@@ -66,32 +63,32 @@ export class UsersComponent implements OnInit {
     ]
   }
 
-  editUser(userId: number): void {
+  private editUser(userId: number): void {
     const index: number = this.users.findIndex(user => user.id == userId);
     this.users[index].updatable = true;
   }
 
-  updateUser(user: DisplayUserDTO): void {
+  private updateUser(user: DisplayUserDTO): void {
     const updateUserObject: UpdateUserDTO = {
       name: user.name,
       role: user.role,
       gender: user.gender
     }
-    this.userService.updateUser(user.id, updateUserObject).subscribe((userDetails) => {
+    this.sudoService.updateUser(user.id, updateUserObject).subscribe((userDetails) => {
       console.log(userDetails);
       this.getAllUsers();
     });
   }
 
-  closeEditUser(userId: number): void {
+  private closeEditUser(userId: number): void {
     const index: number = this.users.findIndex(user => user.id == userId);
     this.users[index].updatable = false;
     this.getAllUsers();
   }
 
-  getAllUsers(): void {
+  private getAllUsers(): void {
 
-    this.userService.getUsers().subscribe((UserInformation: any[]) => {
+    this.sudoService.getUsers().subscribe((UserInformation: any[]) => {
       console.log(UserInformation);
       if (UserInformation && UserInformation.length > 0) {
         this.users = [];
@@ -114,19 +111,19 @@ export class UsersComponent implements OnInit {
     })
   }
 
-  userDetails(userId: number): void {
+  private userDetails(userId: number): void {
     console.log(userId);
     this.router.navigate([`/admin/users/${userId}`]);
   }
 
-  deleteUser(userId: number): void {
-    this.userService.deleteUser(userId).subscribe((user) => {
+  private deleteUser(userId: number): void {
+    this.sudoService.deleteUser(userId).subscribe((user) => {
       console.log(user);
       this.getAllUsers();
     });
   }
 
-  dateToString(dateObj: string): string {
+  private dateToString(dateObj: string): string {
     var dateString: string;
     var date: string = dateObj.split('T')[0];
     var time: string = dateObj.split('T')[1];

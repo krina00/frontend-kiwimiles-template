@@ -11,25 +11,32 @@ import { BaseService } from './base.service';
 export class AuthenticationService extends BaseService {
 
   getHttpOptions(): { headers: HttpHeaders } {
-    const token: string = localStorage.getItem('token');
-    const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-        .set('authorization', 'Bearer ' + token)
-    };
+    const token = localStorage.getItem('token');
+    var httpOptions;
+    if(!token){
+      httpOptions = {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      };
+    }
+    else{
+      httpOptions = {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+          .set('authorization', 'Bearer ' + token)
+      };
+    }
     return httpOptions;
   }
 
   login(user: User): Observable<any> {
-    return this.http.post(this.API_URL + '/auth/login', user, this.httpOptions)
+    return this.http.post(this.API_URL + '/auth/login', user, this.getHttpOptions())
       .pipe(
         map((res: any) => {
           // login successful if there's a jwt token in the response
-          if (res && res.token) {
-            localStorage.setItem('id', (res.user?.id ?? null));
-            localStorage.setItem('token', res.token.accessToken);
-            localStorage.setItem('refreshToken', res.token.refreshToken);
+          if (!res.multiFactorRequired) {
+            localStorage.setItem('token', res.accessToken);
+            localStorage.setItem('refreshToken', res.refreshToken);
             localStorage.removeItem('totpToken');
-            return { accessToken: res.token.accessToken };
+            return { accessToken: res.accessToken };
           }
           else if (res.multiFactorRequired) {
             localStorage.setItem('totpToken', res.totpToken);
@@ -52,15 +59,14 @@ export class AuthenticationService extends BaseService {
   }
 
   loginWithEmailToken(emailMFAToken: string): Observable<any> {
-    return this.http.post(this.API_URL + '/auth/login/token', { token: emailMFAToken }, this.httpOptions)
+    return this.http.post(this.API_URL + '/auth/login/token', { token: emailMFAToken }, this.getHttpOptions())
       .pipe(
         map((res: any) => {
-          if (res && res.token) {
-            localStorage.setItem('id', (res.user?.id ?? null));
-            localStorage.setItem('token', res.token.accessToken);
-            localStorage.setItem('refreshToken', res.token.refreshToken);
+          if (res.accessToken) {
+            localStorage.setItem('token', res.accessToken);
+            localStorage.setItem('refreshToken', res.refreshToken);
             localStorage.removeItem('totpToken');
-            return { accessToken: res.token.accessToken };
+            return { accessToken: res.accessToken };
           }
           else {
             return throwError("Unsuccessful login");
@@ -74,12 +80,12 @@ export class AuthenticationService extends BaseService {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('id');
-    return this.http.post(this.API_URL + '/auth/logout', { token: token }, this.httpOptions);
+    return this.http.post(this.API_URL + '/auth/logout', { token: token }, this.getHttpOptions());
   }
 
   refreshAccessToken() {
     const refreshToken: string = localStorage.getItem('refreshToken');
-    return this.http.post(this.API_URL + '/auth/refresh', { token: refreshToken }, this.httpOptions)
+    return this.http.post(this.API_URL + '/auth/refresh', { token: refreshToken }, this.getHttpOptions())
       .pipe(
         map((res: any) => {
           // login successful if there's a jwt token in the response
@@ -97,7 +103,7 @@ export class AuthenticationService extends BaseService {
 
   register(user: User): Observable<any> {
     console.log(user);
-    return this.http.post(this.API_URL + '/auth/register', user, this.httpOptions);
+    return this.http.post(this.API_URL + '/auth/register', user, this.getHttpOptions());
   }
 
   passwordSet(user: User): Observable<any> {
@@ -112,40 +118,40 @@ export class AuthenticationService extends BaseService {
     return this.http.post(this.API_URL + '/auth/forgot-password', { email: email }, this.getHttpOptions())
   }
 
-  changePassword(userId: number, currentPassword: string, newPassword: string): Observable<any> {
-    return this.http.patch(this.API_URL + `/users/${userId}`, { currentPassword: currentPassword, newPassword: newPassword }, this.getHttpOptions())
+  changePassword(currentPassword: string, newPassword: string): Observable<any> {
+    return this.http.patch(this.API_URL + `/users/userId`, { currentPassword: currentPassword, newPassword: newPassword }, this.getHttpOptions())
   }
 
   resetPassword(password: string, token: string):  Observable<any> {
     return this.http.post(this.API_URL + '/auth/reset-password', { password: password, token: token }, this.getHttpOptions())
   }
 
-  enableTotp2FA(userId: number): Observable<any> {
-    return this.http.post(this.API_URL + `/users/${userId}/multi-factor-authentication/totp`, {}, this.getHttpOptions())
+  enableTotp2FA(): Observable<any> {
+    return this.http.post(this.API_URL + `/users/userId/multi-factor-authentication/totp`, {}, this.getHttpOptions())
   }
 
-  enableSms2FA(userId: number, phoneNumber: string): Observable<any> {
-    return this.http.post(this.API_URL + `/users/${userId}/multi-factor-authentication/sms`, { phone: phoneNumber }, this.getHttpOptions())
+  enableSms2FA(phoneNumber: string): Observable<any> {
+    return this.http.post(this.API_URL + `/users/userId/multi-factor-authentication/sms`, { phone: phoneNumber }, this.getHttpOptions())
   }
 
-  enableEmail2FA(userId: number): Observable<any> {
-    return this.http.post(this.API_URL + `/users/${userId}/multi-factor-authentication/email`, {}, this.getHttpOptions())
+  enableEmail2FA(): Observable<any> {
+    return this.http.post(this.API_URL + `/users/userId/multi-factor-authentication/email`, {}, this.getHttpOptions())
   }
 
-  sendTotp(userId: number, TotpCode: number): Observable<any> {
-    return this.http.post(this.API_URL + `/users/${userId}/multi-factor-authentication/totp`, { token: TotpCode }, this.getHttpOptions())
+  sendTotp(TotpCode: number): Observable<any> {
+    return this.http.post(this.API_URL + `/users/userId/multi-factor-authentication/totp`, { token: TotpCode }, this.getHttpOptions())
   }
 
-  sendSmsOtp(userId: number, smsOtpCode: number): Observable<any> {
-    return this.http.post(this.API_URL + `/users/${userId}/multi-factor-authentication/sms`, { token: smsOtpCode }, this.getHttpOptions())
+  sendSmsOtp(smsOtpCode: number): Observable<any> {
+    return this.http.post(this.API_URL + `/users/userId/multi-factor-authentication/sms`, { token: smsOtpCode }, this.getHttpOptions())
   }
 
-  sendEmailOtp(userId: number, emailOtpCode: number): Observable<any> {
-    return this.http.post(this.API_URL + `/users/${userId}/multi-factor-authentication/email`, { token: emailOtpCode }, this.getHttpOptions())
+  sendEmailOtp(emailOtpCode: number): Observable<any> {
+    return this.http.post(this.API_URL + `/users/userId/multi-factor-authentication/email`, { token: emailOtpCode }, this.getHttpOptions())
   }
 
-  disable2FA(userId: number): Observable<any> {
-    return this.http.delete(this.API_URL + `/users/${userId}/multi-factor-authentication`, this.getHttpOptions())
+  disable2FA(): Observable<any> {
+    return this.http.delete(this.API_URL + `/users/userId/multi-factor-authentication`, this.getHttpOptions())
   }
 
 
