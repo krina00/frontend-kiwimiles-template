@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { PasswordResetPopupComponent } from 'src/app/pages/password-reset-popup/password-reset-popup.component';
+import { RegistrationConfirmationPopupComponent } from 'src/app/pages/registration-confirmation-popup/registration-confirmation-popup.component';
 import { ResetPasswordComponent } from 'src/app/pages/resetpassword/resetpassword.component';
 import { ChangePasswordComponent } from '../../pages/changepassword/changepassword.component';
 import { EmailNotificationComponent } from '../../pages/email-notification/email-notification.component';
@@ -17,4 +18,5 @@ export const AuthLayoutRoutes: Routes = [
   { path: 'auth/link/reset-password', component: ResetPasswordComponent },
   { path: 'email-notification', component: EmailNotificationComponent },
   { path: 'password-reset-window', component: PasswordResetPopupComponent },
+  { path: 'registration-completion-window', component: RegistrationConfirmationPopupComponent },
 ];

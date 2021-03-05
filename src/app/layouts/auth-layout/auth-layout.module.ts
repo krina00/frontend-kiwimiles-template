@@ -21,6 +21,7 @@ import { PasswordSettingsComponent } from '../../pages/password-settings/passwor
 import { RegisterComponent } from '../../pages/register/register.component';
 import { AuthLayoutRoutes } from './auth-layout.routing';
 import { PasswordResetPopupComponent } from '../../pages/password-reset-popup/password-reset-popup.component';
+import { RegistrationConfirmationPopupComponent } from 'src/app/pages/registration-confirmation-popup/registration-confirmation-popup.component';
 
 @NgModule({
   imports: [
@@ -47,7 +48,8 @@ import { PasswordResetPopupComponent } from '../../pages/password-reset-popup/pa
     QRCodeComponent,
     SmsOTPDialogComponent,
     EmailOTPDialogComponent,
-    PasswordResetPopupComponent
+    PasswordResetPopupComponent,
+    RegistrationConfirmationPopupComponent
   ],
   exports: [
     ChangePasswordComponent

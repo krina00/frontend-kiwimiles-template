@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { User } from '../../user';
 import { MINIMUM_PASSWORD_LENGTH } from '../../static-values'
@@ -21,6 +21,7 @@ export class RegisterComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -66,7 +67,9 @@ export class RegisterComponent implements OnInit {
       email: this.registrationForm.value.email,
       password: this.registrationForm.value.password
     }
-    this.authenticationService.register(this.user).subscribe();
+    this.authenticationService.register(this.user).subscribe(()=>{
+      this.router.navigate(['/registration-completion-window']);
+    });
     this.active = false;
   }
 

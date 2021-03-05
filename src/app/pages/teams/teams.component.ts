@@ -80,8 +80,8 @@ export class TeamsComponent implements OnInit {
 
     this.teamService.getAllMemberships().subscribe((membershipInformation: any[]) => {
       console.log(membershipInformation);
+      this.memberships = [];
       if (membershipInformation && membershipInformation.length > 0) {
-        this.memberships = [];
         membershipInformation.forEach((membership) => {
           const membershipObject: MembershipDTO = {
             group: {
