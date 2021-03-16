@@ -30,25 +30,25 @@ export class AllTeamsComponent implements OnInit {
     this.getAllTeams();
   }
 
-  editTeam(teamId: number): void {
+  private editTeam(teamId: number): void {
     const index: number = this.teams.findIndex(team => team.id == teamId);
     this.teams[index].updatable = true;
   }
 
-  updateTeam(team: GroupDTO): void {
+  private updateTeam(team: GroupDTO): void {
     this.teamService.updateTeam(team.id, team.name).subscribe((teamDetails) => {
       console.log(teamDetails);
       this.getAllTeams();
     });
   }
 
-  closeEditTeam(teamId: number): void {
+  private closeEditTeam(teamId: number): void {
     const index: number = this.teams.findIndex(team => team.id == teamId);
     this.teams[index].updatable = false;
     this.getAllTeams();
   }
 
-  getAllTeams(): void {
+  private getAllTeams(): void {
     this.sudoService.getAllAvailableTeams().subscribe((teamInformation: any[]) => {
       if (teamInformation && teamInformation.length > 0) {
         this.teams = [];
@@ -57,7 +57,7 @@ export class AllTeamsComponent implements OnInit {
             id: team.id,
             name: team.name,
             groupPictureUrl: team.groupPictureUrl,
-            createdOn: this.dateToString(team.createdAt)
+            createdOn: this.dateToString(team.createdAt),
           }
           this.teams.push(membershipObject);
         })
@@ -66,11 +66,15 @@ export class AllTeamsComponent implements OnInit {
     })
   }
 
-  teamDetails(teamId: number): void {
+  private teamDetails(teamId: number): void {
     this.router.navigate([`/admin/teams/SUDO/${teamId}`]);
   }
+  
+  private teamRoleDetails(teamId: number): void {
+    this.router.navigate([`/admin/team-roles/${teamId}`]);
+  }
 
-  deleteTeam(teamId: number): void {
+  private deleteTeam(teamId: number): void {
     this.teamService.deleteTeam(teamId).subscribe(() => {
       this.getAllTeams();
     })

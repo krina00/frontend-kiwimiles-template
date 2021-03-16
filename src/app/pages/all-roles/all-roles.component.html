@@ -1,0 +1,51 @@
+<div class="header bg-gradient-danger py-7 py-lg-8">
+    <div class="container">
+      <div class="header-body text-center mb-7">
+        <div class="row justify-content-center">
+          <div class="col-lg-5 col-md-6">
+            <h2 class="text-white">Roles</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container mt--8 pb-5">
+    <div class="row justify-content-center">
+
+      <p-table *ngIf="roles" [value]="roles" styleClass="p-datatable-striped">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">Roles</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </ng-template>
+  
+        <ng-template pTemplate="body" let-role let-i="rowIndex">
+          <tr>
+            <td class="text-center">{{i+1}}</td>
+            <td class="text-center">
+              {{role.name}}
+            </td>
+            <td class="text-center">
+              <i class="fa fa-lock ml-5 text-primary" aria-hidden="true" (click)="getAllPermissions(role.id)"></i>
+              <i class="fa fa-trash-alt ml-5 text-danger" aria-hidden="true" (click)="deleteRole(role.id)"></i>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div class="mt-4">
+        <span class="mr-4">
+          <label for="roleName" class="mr-2 text-white">Role Name:</label>
+          <input pInputText id="roleName" class="p-inputtext" [(ngModel)]="createRoleName" placeholder="i.e. xyz" />
+        </span>
+        <span class="ml-4">
+          <button pButton type="button" class="p-button p-button-help p-button-rounded"
+                  label="Add Role" (click)="addRole()">
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+  

@@ -9,13 +9,11 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DialogModule } from 'primeng/dialog';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
-// import { ToastrModule } from 'ngx-toastr';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table'
 import { DashboardComponent } from '../../pages/dashboard/dashboard.component';
 import { IconsComponent } from '../../pages/icons/icons.component';
 import { TablesComponent } from '../../pages/tables/tables.component';
-//import { MapsComponent } from '../../pages/maps/maps.component';
 import { UserProfileComponent } from '../../pages/user-profile/user-profile.component';
 import { AuthLayoutModule } from '../auth-layout/auth-layout.module';
 import { AdminLayoutRoutes } from './admin-layout.routing';
@@ -27,6 +25,9 @@ import { InviteDialogComponent } from '../../components/invite-dialog/invite-dia
 import { UsersComponent } from '../../pages/all-users/users.component';
 import { PeekUserComponent } from '../../pages/peek-user/peek-user.component';
 import { AllTeamsComponent } from '../../pages/all-teams/all-teams.component';
+import { TeamRolesComponent } from 'src/app/pages/team-roles/team-roles.component';
+import { RoleDetailsComponent } from 'src/app/pages/role-details/role-details.component';
+import { AllRolesComponent } from 'src/app/pages/all-roles/all-roles.component';
 
 @NgModule({
   imports: [
@@ -57,8 +58,10 @@ import { AllTeamsComponent } from '../../pages/all-teams/all-teams.component';
     TeamDetailsComponent,
     InviteDialogComponent,
     UsersComponent,
-    PeekUserComponent
-    //MapsComponent
+    PeekUserComponent,
+    TeamRolesComponent,
+    RoleDetailsComponent,
+    AllRolesComponent
   ],
 })
 

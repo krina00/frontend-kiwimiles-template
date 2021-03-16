@@ -139,9 +139,6 @@ export class TeamDetailsComponent implements OnInit {
         })
 
       }
-      else {
-        console.error('Members of the team ${this.teamName} are not found');
-      }
     })
   }
 
