@@ -14,6 +14,11 @@ export class UserService extends BaseService {
     return this.http.get(this.API_URL + "/users/userId", this.getHttpOptions());
   }
 
+  public getUserPrivilege(): Observable<any> {
+  
+    return this.http.get(this.API_URL + "/users/userId/privileges", this.getHttpOptions());
+  }
+
   public getuserEmailId(): Observable<any> {
 
     return this.http.get(this.API_URL + "/users/userId/emails", this.getHttpOptions());

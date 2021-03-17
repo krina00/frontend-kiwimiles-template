@@ -167,7 +167,11 @@ export class TeamDetailsComponent implements OnInit {
       err => { console.error('user cannot be deleted') });
   }
 
-  dateToString(dateObj: string): string {
+  private goBack(){
+    history.back();
+  }
+
+  private dateToString(dateObj: string): string {
     var dateString: string;
     var date: string = dateObj.split('T')[0];
     var time: string = dateObj.split('T')[1];

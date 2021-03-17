@@ -17,8 +17,10 @@ export class AllTeamsComponent implements OnInit {
   error: string;
   userRoles: DropdownDTO[];
   genders: DropdownDTO[];
+  createTeamName: string;
 
   constructor(
+    private readonly authenticationService: AuthenticationService,
     private readonly teamService: TeamService,
     private readonly sudoService: SudoService,
     private readonly router: Router
@@ -78,6 +80,22 @@ export class AllTeamsComponent implements OnInit {
     this.teamService.deleteTeam(teamId).subscribe(() => {
       this.getAllTeams();
     })
+  }
+
+  private createTeam(): void {
+    if (!this.createTeamName) {
+      this.error = "team name is required";
+      return;
+    }
+    this.error = null;
+    this.teamService.createTeam(this.createTeamName).subscribe((teamDetails) => {
+      console.log(teamDetails);
+      this.getAllTeams();
+    });
+    this.authenticationService.refreshAccessToken().subscribe((data) => {
+      console.log(data);
+      history.go(0);
+    });
   }
 
   dateToString(dateObj: string): string {

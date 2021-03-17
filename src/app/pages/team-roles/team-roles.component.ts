@@ -23,7 +23,7 @@ export class TeamRolesComponent implements OnInit {
   private createMemberRole: string;
   private memberIds: number[];
   private roles: RoleDTO[];
- 
+  private selectAll:boolean = false;
 
   constructor(
     private readonly teamService: TeamService,

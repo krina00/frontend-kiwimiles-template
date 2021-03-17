@@ -6,6 +6,8 @@ import { BaseService } from './base.service';
   providedIn: 'root'
 })
 export class PermissionService extends BaseService {
+  
+  private permissions: string[];
 
   hasPermission(role: string, operation: string): boolean {
     if (role == 'SUDO') {
@@ -27,6 +29,14 @@ export class PermissionService extends BaseService {
       }
     }
     return false;
+  }
+
+  setPermissions(permissions: string[]): void {
+    this.permissions = permissions;
+  }
+
+  getPermissions(): string[] {
+    return this.permissions;
   }
 
 }

@@ -10,8 +10,9 @@ export class RoleDetailsComponent implements OnInit {
 
   private roleId: number;
   private roleName: string;
+  private selectAll: boolean = false;
   private scopes: {id: number, name: string, privileges: string, isGiven: boolean}[];
-
+  
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly roleService: RoleService

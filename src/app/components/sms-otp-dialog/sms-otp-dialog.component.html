@@ -2,8 +2,19 @@
   <div class="row">
     <div *ngIf="!enableCodeInput" class="col-md-12 text-center">
       <h3 class="my-3">Enter your Mobile number to receive otp:</h3>
-      <input pInputText class="p-inputtext-lg" [(ngModel)]="phoneNumber"
-             placeholder="Phone number" />
+      <p-dropdown appendTo="body" [options]="countries" [(ngModel)]="phoneNumberCountryCode" optionLabel="name" 
+      optionValue="code" [filter]="true" filterBy="name"
+        [showClear]="true" placeholder="Select country code">
+        <ng-template let-code pTemplate="item">
+          <div class="country-item">
+            <div>{{code.name}}</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <input pInputText class="p-inputtext" [(ngModel)]="phoneNumber"
+             placeholder="Enter 10 digit number" pattern="[0-9]{10}" required/>
+      <br />
+      <span *ngIf="error" class="text-danger">{{error}}</span>
       <br />
       <br />
       <button class="btn btn-default" (click)="sendPhone()">Send OTP</button>

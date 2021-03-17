@@ -12,9 +12,13 @@
 
 <div class="container mt--8 pb-5">
   <div class="row justify-content-center">
-
     <p-table *ngIf="members" [value]="members" styleClass="p-datatable-striped">
       <ng-template pTemplate="header">
+        <tr>
+          <th colspan="6">
+            Members
+          </th>
+        </tr>
         <tr>
           <th>#</th>
           <th>Name</th>
@@ -63,8 +67,11 @@
         </button>
       </span>
       <span class="mr-4">
-        <button pButton type="button" class="p-button p-button-help p-button-rounded"
-                label="Back to all teams" [routerLink]="['/admin/teams']">
+        <button pButton *ngIf="userRoleInTeam != 'SUDO'" type="button" class="p-button p-button-help p-button-rounded"
+                label="Go to all teams" [routerLink]="['/admin/teams']">
+        </button>
+        <button pButton *ngIf="userRoleInTeam == 'SUDO'" type="button" class="p-button p-button-help p-button-rounded"
+                label="Go to all teams" [routerLink]="['/admin/all-teams']">
         </button>
       </span>
     </div>
