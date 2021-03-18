@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { PermissionService } from 'src/app/services/permission.service';
 import { AuthenticationService, UserService } from '../../services';
 
 declare interface RouteInfo {
@@ -32,23 +33,32 @@ export class SidebarComponent implements OnInit {
   constructor(
     private router: Router,
     private userService: UserService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private permissionService: PermissionService
   ) { }
 
   async ngOnInit() {
-    const userDetails = await this.userService.getUserProfile().toPromise();
-    if (userDetails.role == 'SUDO') {
-      this.menuItems = SUDO_ROUTES.filter(menuItem => menuItem);
-      this.router.events.subscribe((event) => {
-        this.isCollapsed = true;
-      });
+    if(this.permissionService.checkPermission("Read user details")) {
+      const userDetails = await this.userService.getUserProfile().toPromise();
+      if (userDetails.role == 'SUDO') {
+        this.menuItems = SUDO_ROUTES.filter(menuItem => menuItem);
+        this.router.events.subscribe((event) => {
+          this.isCollapsed = true;
+        });
+      }
+      else if (userDetails.role == 'USER') {
+        this.menuItems = ROUTES.filter(menuItem => menuItem);
+        this.router.events.subscribe((event) => {
+          this.isCollapsed = true;
+        });
+      }
     }
-    else if (userDetails.role == 'USER') {
+    else {
       this.menuItems = ROUTES.filter(menuItem => menuItem);
       this.router.events.subscribe((event) => {
         this.isCollapsed = true;
       });
-    }
+    } 
   }
 
   async logout() {

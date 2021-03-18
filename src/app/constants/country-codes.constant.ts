@@ -2,7 +2,7 @@
 
 import { DropdownDTO } from "../dto/dropdown.dto";
 
-export const countrycodes: DropdownDTO[] = [
+export const COUNTRY_CODES: DropdownDTO[] = [
     {name: "Australia (+61)", code: "+61"},
     {name: "Canada (+1)", code: "+1"},
     {name: "China (+86)", code: "+86"},

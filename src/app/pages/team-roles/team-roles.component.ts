@@ -23,6 +23,7 @@ export class TeamRolesComponent implements OnInit {
   private createMemberRole: string;
   private memberIds: number[];
   private roles: RoleDTO[];
+  private givenRoles: RoleDTO[];
   private selectAll:boolean = false;
 
   constructor(
@@ -69,6 +70,7 @@ export class TeamRolesComponent implements OnInit {
           }
         });
       } 
+      this.givenRoles = this.roles.filter(role => role.isAllocated);
     } 
   }
 

@@ -28,7 +28,7 @@
           <tr>
             <th colspan="3">
               <center style="font-size: larger">Team Roles</center>
-              <label class="ml-4" style="float: right;">All Roles</label>
+              <label class="ml-4" style="float: right;">Update Roles</label>
               <label class="switch" style="float: right;">
                 <input type="checkbox" [(ngModel)]="selectAll" checked>
                 <span class="slider round"></span>
@@ -56,12 +56,12 @@
         </ng-template>
       </p-table>
 
-      <p-table *ngIf="roles && !selectAll" [value]="roles" styleClass="p-datatable-striped">
+      <p-table *ngIf="roles && !selectAll" [value]="givenRoles" styleClass="p-datatable-striped">
         <ng-template pTemplate="header">
           <tr>
             <th colspan="3">
               <center style="font-size: larger">Team Roles</center>
-              <label class="ml-4" style="float: right;">All Roles</label>
+              <label class="ml-4" style="float: right;">Update Roles</label>
               <label class="switch" style="float: right;">
                 <input type="checkbox" [(ngModel)]="selectAll" checked>
                 <span class="slider round"></span>
@@ -82,7 +82,7 @@
               {{role.name}}
             </td>
             <td class="text-center">
-              <p-checkbox binary = "true" [(ngModel)]="role.isAllocated"></p-checkbox>
+              <!-- <p-checkbox binary = "true" [(ngModel)]="role.isAllocated"></p-checkbox> -->
               <i class="fa fa-lock ml-5 text-primary" aria-hidden="true" (click)="getAllPermissions(role.id)"></i>
             </td>
           </tr>
@@ -90,8 +90,8 @@
       </p-table>
       <div class="mt-4">
         <span class="mr-4">
-          <button pButton type="button" class="p-button p-button-help p-button-rounded"
-                  label="Update Roles" (click)="updateTeamRoles()">
+          <button *ngIf ="selectAll" pButton type="button" class="p-button p-button-help p-button-rounded"
+                  label="Update" (click)="updateTeamRoles()">
           </button>
         </span>
       </div>

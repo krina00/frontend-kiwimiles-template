@@ -13,6 +13,8 @@ import { TeamService } from '../../services/team.service';
 export class TeamsComponent implements OnInit {
 
   private userName: string;
+  private hasReadPermission: boolean = false;
+  private hasWritePermission: boolean = false;
   memberships: MembershipDTO[];
   createTeamName: string;
   error: string;
@@ -34,6 +36,7 @@ export class TeamsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.checkPermission();
     this.getAllMemberships();
   }
 
@@ -77,26 +80,27 @@ export class TeamsComponent implements OnInit {
   }
 
   private getAllMemberships(): void {
-
-    this.teamService.getAllMemberships().subscribe((membershipInformation: any[]) => {
-      console.log(membershipInformation);
-      this.memberships = [];
-      if (membershipInformation && membershipInformation.length > 0) {
-        membershipInformation.forEach((membership) => {
-          const membershipObject: MembershipDTO = {
-            group: {
-              id: membership?.group?.id,
-              name: membership?.group?.name,
-              groupPictureUrl: membership?.group?.profilePictureUrl
-            },
-            role: membership.role ?? null,
-            since: this.dateToString(membership.createdAt)
-          }
-          this.memberships.push(membershipObject);
-        })
-      }
-      console.log(this.memberships);
-    })
+    if(this.hasReadPermission) {
+      this.teamService.getAllMemberships().subscribe((membershipInformation: any[]) => {
+        console.log(membershipInformation);
+        this.memberships = [];
+        if (membershipInformation && membershipInformation.length > 0) {
+          membershipInformation.forEach((membership) => {
+            const membershipObject: MembershipDTO = {
+              group: {
+                id: membership?.group?.id,
+                name: membership?.group?.name,
+                groupPictureUrl: membership?.group?.profilePictureUrl
+              },
+              role: membership.role ?? null,
+              since: this.dateToString(membership.createdAt)
+            }
+            this.memberships.push(membershipObject);
+          })
+        }
+        console.log(this.memberships);
+      })
+    }
   }
 
   private teamDetails(teamId: number, role: string): void {
@@ -118,6 +122,10 @@ export class TeamsComponent implements OnInit {
     time = time.split('.')[0];
     dateString = date + '  ' + time + '  UTC'
     return dateString;
+  }
+
+  private checkPermission(): void {
+    this.hasReadPermission = this.permissionService.checkPermission("Read groups");
   }
 }
 

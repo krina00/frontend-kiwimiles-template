@@ -12,6 +12,7 @@ export class RoleDetailsComponent implements OnInit {
   private roleName: string;
   private selectAll: boolean = false;
   private scopes: {id: number, name: string, privileges: string, isGiven: boolean}[];
+  private permittedScopes: {id: number, name: string, privileges: string, isGiven: boolean}[];
   
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -48,7 +49,8 @@ export class RoleDetailsComponent implements OnInit {
           this.scopes[index].isGiven = true;
         }
       }); 
-    } 
+    }
+    this.permittedScopes = this.scopes.filter(scope => scope.isGiven);
   }
 
   updateRoleScopes(): void {

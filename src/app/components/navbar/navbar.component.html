@@ -34,7 +34,8 @@
           <div class=" dropdown-header noti-title">
             <h6 class="text-overflow m-0">Welcome!</h6>
           </div>
-          <a routerLinkActive="active" [routerLink]="['/admin/user-profile']" class="dropdown-item">
+          <a routerLinkActive="active" *ngIf = "checkPermissions('Read user details')" 
+          [routerLink]="['/admin/user-profile']" class="dropdown-item">
             <i class="ni ni-single-02"></i>
             <span>My profile</span>
           </a>
@@ -44,9 +45,9 @@
           </a>
           <a routerLinkActive="active" [routerLink]="['/admin/teams']" class="dropdown-item">
             <i class="ni ni-calendar-grid-58"></i>
-            <span>Teams</span>
+            <span>Your Groups</span>
           </a>
-          <a routerLinkActive="active" [routerLink]="['/user-profile']" class="dropdown-item">
+          <a routerLinkActive="active" class="dropdown-item">
             <i class="ni ni-support-16"></i>
             <span>Support</span>
           </a>

@@ -31,12 +31,8 @@ export class DashboardComponent implements OnInit {
   private user: User;
 
   ngOnInit() {
-    this.userService.getUserProfile().subscribe(userDetails => {
-    });
-    this.userService.getUserPrivilege().subscribe(permissions => {
-      this.permissionService.setPermissions(permissions);
-      console.log(this.permissionService.getPermissions());
-    });
+    // this.userService.getUserProfile().subscribe(userDetails => {
+    // });
     this.datasets = [
       [0, 20, 10, 30, 15, 40, 20, 60, 60],
       [0, 20, 5, 25, 10, 30, 15, 40, 40]

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { countrycodes } from 'src/app/constants/country-codes.constant';
+import { COUNTRY_CODES } from 'src/app/constants/country-codes.constant';
 import { DropdownDTO } from 'src/app/dto/dropdown.dto';
 import { AuthenticationService } from '../../services';
 
@@ -17,7 +17,7 @@ export class SmsOTPDialogComponent implements OnInit {
   enableCodeInput: boolean = false;
   error: string;
   selectedCountry: string;
-  countries: DropdownDTO[] = countrycodes;
+  countries: DropdownDTO[] = COUNTRY_CODES;
   constructor(
     private ref: DynamicDialogRef,
     private authenticationService: AuthenticationService

@@ -28,8 +28,8 @@
         <ng-template pTemplate="header">
           <tr>
             <th colspan="3">
-              <center style="font-size: larger">Team Roles</center>
-              <label class="ml-4" style="float: right;">All Scopes</label>
+              <center style="font-size: larger">Role Permissions</center>
+              <label class="ml-4" style="float: right;">Update Permissions</label>
               <label class="switch" style="float: right;">
                 <input type="checkbox" [(ngModel)]="selectAll" checked>
                 <span class="slider round"></span>
@@ -57,12 +57,12 @@
   
       </p-table>
 
-      <p-table *ngIf="scopes && !selectAll" [value]="scopes" styleClass="p-datatable-striped">
+      <p-table *ngIf="scopes && !selectAll" [value]="permittedScopes" styleClass="p-datatable-striped">
         <ng-template pTemplate="header">
           <tr>
-            <th colspan="3">
-              <center style="font-size: larger">Team Roles</center>
-              <label class="ml-4" style="float: right;">All Scopes</label>
+            <th colspan="2">
+              <center style="font-size: larger">Role Permissions</center>
+              <label class="ml-4" style="float: right;">Update Permissions</label>
               <label class="switch" style="float: right;">
                 <input type="checkbox" [(ngModel)]="selectAll" checked>
                 <span class="slider round"></span>
@@ -72,18 +72,15 @@
           <tr>
             <th class="text-center">#</th>
             <th class="text-center">Permissions</th>
-            <th class="text-center">Action</th>
+            <!-- <th class="text-center">Action</th> -->
           </tr>
         </ng-template>
   
         <ng-template pTemplate="body" let-scope let-i="rowIndex">
-          <tr *ngIf="scope.isGiven"> 
+          <tr> 
             <td class="text-center">{{i+1}}</td>
             <td class="text-center">
               {{scope.privileges}}
-            </td>
-            <td class="text-center">
-              <p-checkbox binary = "true" [(ngModel)]="scope.isGiven"></p-checkbox>
             </td>
           </tr>
         </ng-template>
@@ -92,8 +89,8 @@
 
       <div class="mt-4">
         <span class="mr-4">
-          <button pButton type="button" class="p-button p-button-help p-button-rounded"
-                  label="Update Scopes" (click)="updateRoleScopes()">
+          <button *ngIf ="selectAll" pButton type="button" class="p-button p-button-help p-button-rounded"
+                  label="Update" (click)="updateRoleScopes()">
           </button>
         </span>
       </div>

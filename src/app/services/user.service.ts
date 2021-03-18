@@ -1,16 +1,17 @@
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserDTO } from '../dto/user.dto';
 import { BaseService } from './base.service';
+import { PermissionService } from './permission.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService extends BaseService {
-
+   
   public getUserProfile(): Observable<any> {
-  
+    
     return this.http.get(this.API_URL + "/users/userId", this.getHttpOptions());
   }
 

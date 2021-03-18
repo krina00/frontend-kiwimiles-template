@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PermissionService } from 'src/app/services/permission.service';
 import { UserDTO } from '../../dto/user.dto';
 import { UserService } from '../../services';
 
@@ -16,6 +17,9 @@ export class UserProfileComponent implements OnInit {
 
   user: UserDTO;
   editable: boolean = false;
+  hasEmailReadPermission: boolean = false;
+  hasProfileWritePermission: boolean = false;
+  hasEmailWritePermission: boolean = false;
   genders: GenderDTO[] = [
     { label: 'Male', type: 'MALE' },
     { label: 'Female', type: 'FEMALE' },
@@ -24,21 +28,28 @@ export class UserProfileComponent implements OnInit {
   ];
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private permissionService: PermissionService
   ) { }
 
   async ngOnInit() {
+    this.checkPermissions();
     await this.getUserProfile();
     await this.getUserEmailId();
   }
 
   private async getUserEmailId() {
-    const emailData: { email: string }[] = await this.userService.getuserEmailId().toPromise();
-    if (emailData.length > 0) {
-      this.user.email = emailData[0].email;
+    if(this.permissionService.checkPermission("Read user email")) {
+      const emailData: { email: string }[] = await this.userService.getuserEmailId().toPromise();
+      if (emailData.length > 0) {
+        this.user.email = emailData[0].email;
+      }
+      else {
+        console.error('No emails found');
+      }
     }
     else {
-      console.error('No emails found');
+
     }
   }
 
@@ -80,5 +91,10 @@ export class UserProfileComponent implements OnInit {
         console.error(error);
       }
     )
+  }
+
+  private checkPermissions(){
+    this.hasEmailReadPermission = this.permissionService.checkPermission("Read user email");
+    this.hasProfileWritePermission = this.permissionService.checkPermission("Write user details");
   }
 }
