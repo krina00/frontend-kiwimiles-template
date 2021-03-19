@@ -25,6 +25,7 @@ export class TeamRolesComponent implements OnInit {
   private roles: RoleDTO[];
   private givenRoles: RoleDTO[];
   private selectAll:boolean = false;
+  private isAllocateAllRoles: boolean = false;
 
   constructor(
     private readonly teamService: TeamService,
@@ -47,8 +48,7 @@ export class TeamRolesComponent implements OnInit {
     this.getAllRoles();
   }
 
-
-  async getAllRoles(): Promise<void> {
+  private async getAllRoles(): Promise<void> {
     const roleInformation: any[] = await this.roleService.getAllRoles().toPromise();
     if (roleInformation && roleInformation.length > 0) {
       this.roles = [];
@@ -74,7 +74,7 @@ export class TeamRolesComponent implements OnInit {
     } 
   }
 
-  updateTeamRoles(): void {
+  private updateTeamRoles(): void {
     const roles: {name: string}[] = this.roles.map((role) => {
       if(role.isAllocated) { return {name: role.name}; }
     }).filter(value=> value);
@@ -87,9 +87,13 @@ export class TeamRolesComponent implements OnInit {
     })
   }
 
-  getAllPermissions(roleId: number): void{
+  private getAllPermissions(roleId: number): void{
     console.log(roleId);
     this.router.navigate([`/admin/roles/${roleId}`])
   }
 
+  private selectAllRoles(){
+    if(this.isAllocateAllRoles) this.roles.forEach(role => role.isAllocated = true); 
+    else this.roles.forEach(role => role.isAllocated = false);
+  }
 }

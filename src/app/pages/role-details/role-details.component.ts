@@ -11,6 +11,7 @@ export class RoleDetailsComponent implements OnInit {
   private roleId: number;
   private roleName: string;
   private selectAll: boolean = false;
+  private isGrantAllPermissions: boolean = false;
   private scopes: {id: number, name: string, privileges: string, isGiven: boolean}[];
   private permittedScopes: {id: number, name: string, privileges: string, isGiven: boolean}[];
   
@@ -32,7 +33,7 @@ export class RoleDetailsComponent implements OnInit {
     await this.getScopes();
   }
 
-  async getScopes(): Promise<void> {
+  private async getScopes(): Promise<void> {
     const scopeInformation: {id: number, name: string, privileges: string}[] = await this.roleService.getAllScopes().toPromise();
     if (scopeInformation && scopeInformation.length > 0) {
       this.scopes = [];
@@ -53,7 +54,7 @@ export class RoleDetailsComponent implements OnInit {
     this.permittedScopes = this.scopes.filter(scope => scope.isGiven);
   }
 
-  updateRoleScopes(): void {
+  private updateRoleScopes(): void {
     const scopes: {name: string}[] = this.scopes.map((scope) => {
       if(scope.isGiven) { return {name: scope.name}; }
     }).filter(value=> value);
@@ -64,5 +65,10 @@ export class RoleDetailsComponent implements OnInit {
     error => {
       console.log(error);
     })
+  }
+
+  private selectAllPermissions() {
+    if(this.isGrantAllPermissions) this.scopes.forEach(scope => scope.isGiven = true); 
+    else this.scopes.forEach(scope => scope.isGiven = false);
   }
 }
