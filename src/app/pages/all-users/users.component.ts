@@ -90,8 +90,8 @@ export class UsersComponent implements OnInit {
 
     this.sudoService.getUsers().subscribe((UserInformation: any[]) => {
       console.log(UserInformation);
+      this.users = [];
       if (UserInformation && UserInformation.length > 0) {
-        this.users = [];
         UserInformation.forEach((user) => {
           const userObject: DisplayUserDTO = {
             id: user.id,

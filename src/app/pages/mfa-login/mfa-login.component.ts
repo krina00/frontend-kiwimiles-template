@@ -40,10 +40,6 @@ export class MultiFactorLoginComponent implements OnInit, OnDestroy {
       this.error = 'OTP is Required';
       return false;
     }
-    if (isNaN(otpCode)) {
-      this.error = 'Invalid OTP';
-      return false;
-    }
     if (otpCode.toString().length < 6) {
       this.error = 'Minimum 6 digits are required';
       return false;

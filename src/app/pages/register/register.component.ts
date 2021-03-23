@@ -14,6 +14,7 @@ import { MINIMUM_PASSWORD_LENGTH } from '../../static-values'
 export class RegisterComponent implements OnInit {
 
   registrationForm: FormGroup;
+  passwordStrength: string;
   submitted = false;
   active = true;
   user: User;
@@ -34,10 +35,10 @@ export class RegisterComponent implements OnInit {
       validator: this.mustMatch('password', 'confirmPassword')
     });
   }
+
   get f() { return this.registrationForm.controls; }
 
-
-  mustMatch(controlName: string, matchingControlName: string) {
+  private mustMatch(controlName: string, matchingControlName: string) {
     return (formGroup: FormGroup) => {
       const control = formGroup.controls[controlName];
       const matchingControl = formGroup.controls[matchingControlName];
@@ -54,11 +55,11 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  onSubmit() {
-    console.log('in submit')
+  private onSubmit() {
     this.submitted = true;
 
     if (this.registrationForm.invalid) {
+      console.log(this.registrationForm);
       console.log('invalid data');
       return;
     }
@@ -71,6 +72,41 @@ export class RegisterComponent implements OnInit {
       this.router.navigate(['/registration-completion-window']);
     });
     this.active = false;
+  }
+
+  private signUpWithGoogle(): void {
+    this.authenticationService.loginWithGoogle()
+    .subscribe(data => {
+     console.log("data returned");
+     console.log(data);
+    },
+    error => {
+     location.href = 'http://localhost:8080/v1/auth/google';
+    });
+  }
+
+  private signUpWithFacebook(): void {
+    this.authenticationService.loginWithFacebook()
+    .subscribe(data => {
+     console.log("data returned");
+     console.log(data);
+    },
+    error => {
+     location.href = 'http://localhost:8080/v1/auth/facebook';
+    });
+  }
+
+  private checkPassword(){
+    const password: string = this.registrationForm.value.password;
+    if(!password){
+      this.passwordStrength = null;
+      return;
+    }
+    const strongPasswordRegex: RegExp = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+    const mediumPasswordRegex: RegExp = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+    if(password.match(strongPasswordRegex)) this.passwordStrength = "strong";
+    else if(password.match(mediumPasswordRegex)) this.passwordStrength = "medium";
+    else this.passwordStrength = "weak";
   }
 
 }

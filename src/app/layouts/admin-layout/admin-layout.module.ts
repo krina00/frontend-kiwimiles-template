@@ -21,6 +21,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TeamsComponent } from '../../pages/teams/teams.component';
 import { TeamDetailsComponent } from '../../pages/team-details/team-details.component';
 import { BadgeModule } from 'primeng/badge';
+import {TooltipModule} from 'primeng/tooltip';
 import { InviteDialogComponent } from '../../components/invite-dialog/invite-dialog.component';
 import { UsersComponent } from '../../pages/all-users/users.component';
 import { PeekUserComponent } from '../../pages/peek-user/peek-user.component';
@@ -46,7 +47,8 @@ import { AllRolesComponent } from 'src/app/pages/all-roles/all-roles.component';
     CheckboxModule,
     DropdownModule,
     TableModule,
-    BadgeModule
+    BadgeModule,
+    TooltipModule
   ],
   declarations: [
     DashboardComponent,

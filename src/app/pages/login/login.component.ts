@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { User } from '../../user';
-import { ERR_UNAUTHORIZED, ERR_BAD_REQUEST } from '../../errors/error.constants'
+import { ERR_UNAUTHORIZED, ERR_BAD_REQUEST, ERR_TOO_MANY_REQUESTS } from '../../errors/error.constants'
 
 @Component({
   selector: 'app-login',
@@ -44,6 +44,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           if (error.status == 401) {
             this.error = ERR_UNAUTHORIZED;
           }
+          else if(error.status == 429){
+            this.error = ERR_TOO_MANY_REQUESTS;
+          }
           else if (error.status == 400) {
             this.error = ERR_BAD_REQUEST;
           }
@@ -66,12 +69,33 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
+  loginWithGoogle(){
+     this.authenticationService.loginWithGoogle()
+     .subscribe(data => {
+      console.log("data returned");
+      console.log(data);
+     },
+     error => {
+      location.href = 'http://localhost:8080/v1/auth/google';
+     });
+  }
+
+  loginWithFacebook(){
+    this.authenticationService.loginWithFacebook()
+    .subscribe(data => {
+     console.log("data returned");
+     console.log(data);
+    },
+    error => {
+     location.href = 'http://localhost:8080/v1/auth/facebook';
+    });
+  }
+
   passwordLessLogin(): void {
     if (!this.email) {
       this.error = "Email field is required"
       return;
     }
-
     this.authenticationService.login({ email: this.email } as User)
       .subscribe(
         data => {
@@ -83,6 +107,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           }
           else if (error.status == 400) {
             this.error = ERR_BAD_REQUEST;
+          }
+          else if (error.status == 429) {
+            this.error = ERR_TOO_MANY_REQUESTS;
           }
           else {
             this.error = "Login Error";
@@ -125,6 +152,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           }
           else if (error.status == 400) {
             this.error = ERR_BAD_REQUEST;
+          }
+          else if (error.status == 429) {
+            this.error = ERR_TOO_MANY_REQUESTS;
           }
           else {
             this.error = "Login Error";

@@ -95,7 +95,7 @@ export class ChangePasswordComponent implements OnInit {
     if(this.hasEMAIL_permission) {
       this.mfaMethods.push({ name: 'Email OTP', code: 'EMAIL' })
     }
-    if(this.mfaMethods.length == 1){
+    if(this.mfaMethods.length >= 1){
       this.twoFactorType = this.mfaMethods[0].code
     }
   }

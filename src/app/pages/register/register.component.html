@@ -16,13 +16,13 @@
     <div class="col-lg-6 col-md-8">
       <div class="card bg-secondary shadow border-0">
         <div class="card-header bg-transparent pb-5">
-          <div class="text-muted text-center mt-2 mb-4"><small>Sign up with</small></div>
+          <div class="text-muted text-center mt-2 mb-4"><small>Continue with</small></div>
           <div class="text-center">
-            <a href="javascript:void(0)" class="btn btn-neutral btn-icon mr-4">
-              <span class="btn-inner--icon"><img src="assets/img/icons/common/github.svg"></span>
-              <span class="btn-inner--text">Github</span>
+            <a (click)= "signUpWithFacebook()" class="btn btn-neutral btn-icon mr-4">
+              <span class="btn-inner--icon"><img src="assets/img/icons/common/facebook.svg"></span>
+              <span class="btn-inner--text">Facebook</span>
             </a>
-            <a href="javascript:void(0)" class="btn btn-neutral btn-icon">
+            <a (click)= "signUpWithGoogle()" class="btn btn-neutral btn-icon">
               <span class="btn-inner--icon"><img src="assets/img/icons/common/google.svg"></span>
               <span class="btn-inner--text">Google</span>
             </a>
@@ -38,7 +38,13 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                 </div>
-                <input class="form-control" formControlName="name" placeholder="Name" type="text">
+                <input class="form-control" formControlName="name" placeholder="Name" type="text"
+                [ngClass]="{ 'is-invalid': submitted && f.name.errors }" />
+                <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                  <div *ngIf="f.name.errors.required">
+                    <span class="ml-4"><strong>Name is required</strong></span>
+                    </div>
+                </div>
               </div>
             </div>
             <div class="form-group">
@@ -46,7 +52,13 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                 </div>
-                <input class="form-control" formControlName="email" placeholder="Email" type="email">
+                <input class="form-control" formControlName="email" placeholder="Email" type="email"
+                [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+                <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                  <div *ngIf="f.email.errors.required">
+                    <span class="ml-4"><strong>Email is required</strong></span>
+                    </div>
+                </div>
               </div>
             </div>
             <div class="form-group">
@@ -54,17 +66,39 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                 </div>
-                <input class="form-control" formControlName="password" placeholder="Password" type="password">
+                <input class="form-control" formControlName="password" (keyup) = "checkPassword()"
+                      placeholder="Password" type="password"
+                      [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+                <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                  <div *ngIf="f.password.errors.required">
+                    <span class="ml-4"><strong>Password is required</strong></span>
+                  </div>
+                  <div *ngIf="f.password.errors.minlength">
+                    <span class="ml-4"><strong>Password must be at least 8 characters</strong></span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="text-muted font-italic" style="margin-top:-22px"><small>password strength: <span class="text-success font-weight-700">strong</span></small></div>
+            <div class="text-muted font-italic" style="margin-top:-22px"><small>password strength: 
+              <span *ngIf="passwordStrength == 'strong'" class="text-success font-weight-700">{{passwordStrength}}</span>
+              <span *ngIf="passwordStrength == 'medium'" class="text-warning font-weight-700">{{passwordStrength}}</span>
+              <span *ngIf="passwordStrength == 'weak'" class="text-danger font-weight-700">{{passwordStrength}}</span></small></div>
             <br/>
             <div class="form-group">
               <div class="input-group input-group-alternative">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                 </div>
-                <input class="form-control" formControlName="confirmPassword" placeholder="Confirm password" type="password">
+                <input class="form-control" formControlName="confirmPassword" placeholder="Confirm password"
+                 type="password" [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" />
+                <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                  <div *ngIf="f.confirmPassword.errors.required">
+                    <span class="ml-4"><strong>Confirm Password is required</strong></span>
+                  </div>
+                  <div *ngIf="mustMatch('password', 'confirmPassword')">
+                    <span class="ml-4"><strong>Confirm password must match with password</strong></span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="row my-4">
@@ -80,6 +114,11 @@
               <button type="submit" class="btn btn-primary mt-4">Create account</button>
             </div>
           </form>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12 text-right">
+          <a [routerLink]="['/auth/link/login']" class="text-light"><small>Already have an account?</small></a>
         </div>
       </div>
     </div>

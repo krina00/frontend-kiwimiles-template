@@ -13,7 +13,14 @@
 <div class="container mt--8 pb-5">
   <div class="row justify-content-center">
 
-    <p-table *ngIf="teams" [resizableColumns]="true" [value]="teams" styleClass="p-datatable-striped">
+    <p-table *ngIf="!teams || teams.length == 0" styleClass="p-datatable-striped">
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="text-center">No Teams Present at this moment</th>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-table *ngIf="teams && teams.length > 0" [resizableColumns]="true" [value]="teams" styleClass="p-datatable-striped">
       <ng-template pTemplate="header">
         <tr>
           <th style="width:10%">#</th>

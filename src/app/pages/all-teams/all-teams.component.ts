@@ -52,8 +52,8 @@ export class AllTeamsComponent implements OnInit {
 
   private getAllTeams(): void {
     this.sudoService.getAllAvailableTeams().subscribe((teamInformation: any[]) => {
+      this.teams = [];
       if (teamInformation && teamInformation.length > 0) {
-        this.teams = [];
         teamInformation.forEach((team) => {
           const membershipObject: GroupDTO = {
             id: team.id,
@@ -94,7 +94,7 @@ export class AllTeamsComponent implements OnInit {
     });
     this.authenticationService.refreshAccessToken().subscribe((data) => {
       console.log(data);
-      history.go(0);
+      //history.go(0);
     });
   }
 

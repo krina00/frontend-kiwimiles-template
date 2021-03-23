@@ -26,8 +26,8 @@ export class AllRolesComponent implements OnInit {
 
   async getAllRoles(): Promise<void> {
     const roleInformation: any[] = await this.roleService.getAllRoles().toPromise();
+    this.roles = [];
     if (roleInformation && roleInformation.length > 0) {
-      this.roles = [];
       roleInformation.forEach((role) => {
         const roleObject: RoleDTO = { 
           id: role.id,

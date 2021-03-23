@@ -27,6 +27,14 @@ export class AuthenticationService extends BaseService {
     return httpOptions;
   }
 
+  loginWithGoogle() {
+    return this.http.get(this.API_URL + '/auth/google');
+  }
+
+  loginWithFacebook() {
+    return this.http.get(this.API_URL + '/auth/facebook');
+  }
+
   login(user: User): Observable<any> {
     return this.http.post(this.API_URL + '/auth/login', user, this.getHttpOptions())
       .pipe(
@@ -80,6 +88,7 @@ export class AuthenticationService extends BaseService {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('id');
+    sessionStorage.clear();
     return this.http.post(this.API_URL + '/auth/logout', { token: token }, this.getHttpOptions());
   }
 

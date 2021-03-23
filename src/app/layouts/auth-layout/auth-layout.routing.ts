@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { LoginOAuthComponent } from 'src/app/pages/login-oauth/login-oauth.component';
 import { PasswordResetPopupComponent } from 'src/app/pages/password-reset-popup/password-reset-popup.component';
 import { RegistrationConfirmationPopupComponent } from 'src/app/pages/registration-confirmation-popup/registration-confirmation-popup.component';
 import { ResetPasswordComponent } from 'src/app/pages/resetpassword/resetpassword.component';
@@ -11,6 +12,7 @@ import { RegisterComponent } from '../../pages/register/register.component';
 
 export const AuthLayoutRoutes: Routes = [
   { path: 'auth/link/login', component: LoginComponent },
+  { path: 'auth/link/login/success', component: LoginOAuthComponent },
   { path: 'otp', component: MultiFactorLoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotpasswordComponent },

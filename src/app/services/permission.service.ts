@@ -48,7 +48,7 @@ export class PermissionService {
 
     var permissions = sessionStorage.getItem("permissions");
     if(!permissions) return false;
-    if(permissions.indexOf('*') > -1) return true; 
+    if(permissions.indexOf('*') > -1 && permissions.length == 1) return true; 
     return ((permissions.indexOf(scope)>-1) ? true : false);
   }
 

@@ -10,6 +10,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { EmailOTPDialogComponent } from '../../components/email-otp-dialog/email-otp-dialog.component';
 import { QRCodeComponent } from '../../components/qr-code/qr-code.component';
+import { BackupCodeComponent } from '../../components/backup-codes/backup-codes.component';
 import { SmsOTPDialogComponent } from '../../components/sms-otp-dialog/sms-otp-dialog.component';
 import { ChangePasswordComponent } from '../../pages/changepassword/changepassword.component';
 import { ResetPasswordComponent } from '../../pages/resetpassword/resetpassword.component';
@@ -22,6 +23,8 @@ import { RegisterComponent } from '../../pages/register/register.component';
 import { AuthLayoutRoutes } from './auth-layout.routing';
 import { PasswordResetPopupComponent } from '../../pages/password-reset-popup/password-reset-popup.component';
 import { RegistrationConfirmationPopupComponent } from 'src/app/pages/registration-confirmation-popup/registration-confirmation-popup.component';
+import { LoginOAuthComponent } from 'src/app/pages/login-oauth/login-oauth.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
   imports: [
@@ -34,10 +37,12 @@ import { RegistrationConfirmationPopupComponent } from 'src/app/pages/registrati
     ButtonModule,
     DynamicDialogModule,
     CheckboxModule,
-    DropdownModule
+    DropdownModule,
+    TooltipModule
   ],
   declarations: [
     LoginComponent,
+    LoginOAuthComponent,
     MultiFactorLoginComponent,
     RegisterComponent,
     EmailNotificationComponent,
@@ -46,6 +51,7 @@ import { RegistrationConfirmationPopupComponent } from 'src/app/pages/registrati
     ResetPasswordComponent,
     PasswordSettingsComponent,
     QRCodeComponent,
+    BackupCodeComponent,
     SmsOTPDialogComponent,
     EmailOTPDialogComponent,
     PasswordResetPopupComponent,
