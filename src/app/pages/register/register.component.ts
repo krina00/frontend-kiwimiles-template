@@ -3,7 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { User } from '../../user';
-import { MINIMUM_PASSWORD_LENGTH } from '../../static-values'
+import { MINIMUM_PASSWORD_LENGTH, WELCOME_TITLE } from '../../static-values'
+import { throwError } from 'rxjs';
 
 
 @Component({
@@ -13,6 +14,7 @@ import { MINIMUM_PASSWORD_LENGTH } from '../../static-values'
 })
 export class RegisterComponent implements OnInit {
 
+  title: string = WELCOME_TITLE;
   registrationForm: FormGroup;
   passwordStrength: string;
   submitted = false;
@@ -30,7 +32,7 @@ export class RegisterComponent implements OnInit {
       name: ['', Validators.required],
       email: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(MINIMUM_PASSWORD_LENGTH)]],
-      confirmPassword: ['', Validators.required],
+      confirmPassword: [''],
     }, {
       validator: this.mustMatch('password', 'confirmPassword')
     });
@@ -76,23 +78,21 @@ export class RegisterComponent implements OnInit {
 
   private signUpWithGoogle(): void {
     this.authenticationService.loginWithGoogle()
-    .subscribe(data => {
-     console.log("data returned");
-     console.log(data);
-    },
-    error => {
-     location.href = 'http://localhost:8080/v1/auth/google';
-    });
+     .subscribe(response => {
+      location.href = response.url;
+     },
+     error => {
+        throwError(error);
+     });
   }
 
   private signUpWithFacebook(): void {
     this.authenticationService.loginWithFacebook()
-    .subscribe(data => {
-     console.log("data returned");
-     console.log(data);
+    .subscribe(response => {
+      location.href = response.url;
     },
     error => {
-     location.href = 'http://localhost:8080/v1/auth/facebook';
+      throwError(error);
     });
   }
 

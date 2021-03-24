@@ -1,6 +1,6 @@
 import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { from, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { User } from '../user';
 import { BaseService } from './base.service';
@@ -28,11 +28,33 @@ export class AuthenticationService extends BaseService {
   }
 
   loginWithGoogle() {
-    return this.http.get(this.API_URL + '/auth/google');
+    return from (
+      fetch(
+        this.API_URL + '/auth/google',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+          mode: 'cors',
+          redirect: 'manual'
+        }
+      ));
   }
 
   loginWithFacebook() {
-    return this.http.get(this.API_URL + '/auth/facebook');
+    return from (
+      fetch(
+        this.API_URL + '/auth/facebook',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+          mode: 'cors',
+          redirect: 'manual'
+        }
+      ));
   }
 
   login(user: User): Observable<any> {

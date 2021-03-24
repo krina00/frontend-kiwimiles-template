@@ -62,8 +62,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label class="form-control-label" for="input-role">Role</label>
-                  <span *ngIf="!editable" class="form-control form-control-alternative">{{user.role}}</span>
-                  <input *ngIf="editable" type="text" id="input-role" class="form-control form-control-alternative" [(ngModel)]="user.role" placeholder="Role">
+                  <span class="form-control form-control-alternative">{{user.role}}</span>
                 </div>
               </div>
             </div>

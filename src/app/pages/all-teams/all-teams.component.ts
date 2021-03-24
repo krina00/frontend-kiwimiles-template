@@ -84,7 +84,7 @@ export class AllTeamsComponent implements OnInit {
 
   private createTeam(): void {
     if (!this.createTeamName) {
-      this.error = "team name is required";
+      this.error = "Team name is required";
       return;
     }
     this.error = null;

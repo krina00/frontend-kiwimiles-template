@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { User } from '../../user';
 import { ERR_UNAUTHORIZED, ERR_BAD_REQUEST } from '../../errors/error.constants'
+import { WELCOME_TITLE } from 'src/app/static-values';
 
 @Component({
   selector: 'app-mfa-login',
@@ -10,6 +11,7 @@ import { ERR_UNAUTHORIZED, ERR_BAD_REQUEST } from '../../errors/error.constants'
 })
 export class MultiFactorLoginComponent implements OnInit, OnDestroy {
 
+  private title: string = WELCOME_TITLE;
   private email: string;
   private password: string;
   private otpCode: number;

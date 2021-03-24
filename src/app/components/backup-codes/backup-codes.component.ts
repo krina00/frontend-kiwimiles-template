@@ -32,5 +32,26 @@ export class BackupCodeComponent implements OnInit {
   closeDialog() {
     this.ref.close();
   }
+
+  private dynamicDownloadTxt() {
+    this.dyanmicDownloadByHtmlTag({
+      fileName: 'Backup Codes',
+      text: this.backupCodes.toString()
+    });
+  }
+
+  private dyanmicDownloadByHtmlTag(arg: {
+    fileName: string,
+    text: string
+  }) {
+    
+    const element = document.createElement('a');
+    const fileType = 'text/plain';
+    element.setAttribute('href', `data:${fileType};charset=utf-8,${encodeURIComponent(arg.text)}`);
+    element.setAttribute('download', arg.fileName);
+
+    var event = new MouseEvent("click");
+    element.dispatchEvent(event);
+  }
 }
 

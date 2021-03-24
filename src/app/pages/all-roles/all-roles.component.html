@@ -46,6 +46,7 @@
         <span class="mr-2">
           <label for="roleName" class="mr-2 text-white">Role Name:</label>
           <input pInputText id="roleName" class="p-inputtext" [(ngModel)]="createRoleName" placeholder="i.e. xyz" />
+          <span *ngIf="error" class="text-danger font-weight-bold m-2">{{error}}</span>
         </span>
         <span class="ml-2">
           <button pButton type="button" class="p-button p-button-help p-button-rounded"

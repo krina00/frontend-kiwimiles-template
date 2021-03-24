@@ -3,6 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { User } from '../../user';
 import { ERR_UNAUTHORIZED, ERR_BAD_REQUEST, ERR_TOO_MANY_REQUESTS } from '../../errors/error.constants'
+import { throwError } from 'rxjs';
+import { WELCOME_TITLE } from 'src/app/static-values';
 
 @Component({
   selector: 'app-login',
@@ -11,6 +13,7 @@ import { ERR_UNAUTHORIZED, ERR_BAD_REQUEST, ERR_TOO_MANY_REQUESTS } from '../../
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
+  title: string = WELCOME_TITLE;
   email: string;
   password: string;
   error: string;
@@ -70,24 +73,22 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   loginWithGoogle(){
-     this.authenticationService.loginWithGoogle()
-     .subscribe(data => {
-      console.log("data returned");
-      console.log(data);
+    this.authenticationService.loginWithGoogle()
+     .subscribe(response => {
+      location.href = response.url;
      },
      error => {
-      location.href = 'http://localhost:8080/v1/auth/google';
+        throwError(error);
      });
   }
 
   loginWithFacebook(){
     this.authenticationService.loginWithFacebook()
-    .subscribe(data => {
-     console.log("data returned");
-     console.log(data);
+    .subscribe(response => {
+      location.href = response.url;
     },
     error => {
-     location.href = 'http://localhost:8080/v1/auth/facebook';
+      throwError(error);
     });
   }
 

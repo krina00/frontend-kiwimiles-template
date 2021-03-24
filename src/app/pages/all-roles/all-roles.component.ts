@@ -14,6 +14,7 @@ export class AllRolesComponent implements OnInit {
 
   private createRoleName: string;
   private roles: RoleDTO[];
+  private error: string;
 
   constructor(
     private readonly roleService: RoleService,
@@ -45,6 +46,11 @@ export class AllRolesComponent implements OnInit {
   }
 
   addRole(): void {
+    if (!this.createRoleName) {
+      this.error = "Role name is required";
+      return;
+    }
+    this.error = null;
     this.roleService.addRole({name: this.createRoleName}).subscribe(()=>{
       this.getAllRoles();
     });
