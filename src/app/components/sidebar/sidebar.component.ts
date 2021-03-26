@@ -10,7 +10,7 @@ declare interface RouteInfo {
   class: string;
 }
 export const SUDO_ROUTES: RouteInfo[] = [
-  { path: '/admin/dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },
+  //{ path: '/admin/dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },
   { path: '/admin/users', title: 'All Users', icon: 'pi pi-users text-indigo font-weight-bold', class: '' },    
   { path: '/admin/all-teams', title: 'All Teams', icon: 'fa fa-users text-green', class: '' },
   { path: '/admin/all-roles', title: 'All Roles', icon: 'fa fa-tasks text-orange', class: '' },

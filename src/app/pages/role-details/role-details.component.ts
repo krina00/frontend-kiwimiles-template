@@ -14,7 +14,9 @@ export class RoleDetailsComponent implements OnInit {
   private isGrantAllPermissions: boolean = false;
   private scopes: {id: number, name: string, privileges: string, isGiven: boolean}[];
   private permittedScopes: {id: number, name: string, privileges: string, isGiven: boolean}[];
-  
+  private displayError: boolean = false;
+  private error: string;
+
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly roleService: RoleService
@@ -34,15 +36,26 @@ export class RoleDetailsComponent implements OnInit {
   }
 
   private async getScopes(): Promise<void> {
-    const scopeInformation: {id: number, name: string, privileges: string}[] = await this.roleService.getAllScopes().toPromise();
+    const scopeInformation: {id: number, name: string, privileges: string}[] = 
+      await this.roleService.getAllScopes()
+      .toPromise()
+      .catch(error => {
+        this.displayError = true;
+        this.error = "Could not find scopes"
+      });
     if (scopeInformation && scopeInformation.length > 0) {
       this.scopes = [];
       scopeInformation.forEach((scope) => {
         this.scopes.push({id: scope.id, name: scope.name, privileges: scope.privileges, isGiven: false});
       });
     }
-    const allotedScopes: {id: number, name: string, privileges: string}[] = await this.roleService.getRoleScopes(this.roleId).toPromise();
-    console.log(allotedScopes);
+    const allotedScopes: {id: number, name: string, privileges: string}[] =
+     await this.roleService.getRoleScopes(this.roleId).toPromise()
+     .catch(error => {
+      this.displayError = true;
+      this.error = "Could not find scopes"
+    });
+    
     if(allotedScopes && allotedScopes.length > 0 ) {
       allotedScopes.forEach((allotedScope) => {
         const index: number = this.scopes.findIndex(scope => scope.id == allotedScope?.id);
@@ -63,7 +76,8 @@ export class RoleDetailsComponent implements OnInit {
       await this.getScopes();
     },
     error => {
-      console.log(error);
+      this.displayError = true;
+      this.error = "Could not update scopes"
     })
   }
 

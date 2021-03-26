@@ -53,6 +53,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           else if (error.status == 400) {
             this.error = ERR_BAD_REQUEST;
           }
+          else if (error.status == 404) {
+            this.error = "Invalid credentials";
+          }
           else {
             this.error = "Login Error";
           }
@@ -112,6 +115,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           else if (error.status == 429) {
             this.error = ERR_TOO_MANY_REQUESTS;
           }
+          else if (error.status == 404) {
+            this.error = "Invalid credentials";
+          }
           else {
             this.error = "Login Error";
           }
@@ -156,6 +162,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           }
           else if (error.status == 429) {
             this.error = ERR_TOO_MANY_REQUESTS;
+          }
+          else if (error.status == 404) {
+            this.error = "Invalid credentials";
           }
           else {
             this.error = "Login Error";

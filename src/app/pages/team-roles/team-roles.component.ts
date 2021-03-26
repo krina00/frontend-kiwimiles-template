@@ -26,6 +26,8 @@ export class TeamRolesComponent implements OnInit {
   private givenRoles: RoleDTO[];
   private selectAll:boolean = false;
   private isAllocateAllRoles: boolean = false;
+  private error: string;
+  private displayError: boolean = false;
 
   constructor(
     private readonly teamService: TeamService,
@@ -49,7 +51,12 @@ export class TeamRolesComponent implements OnInit {
   }
 
   private async getAllRoles(): Promise<void> {
-    const roleInformation: any[] = await this.roleService.getAllRoles().toPromise();
+    const roleInformation: any[] = await this.roleService.getAllRoles()
+    .toPromise()
+    .catch(error => {
+      this.displayError = true;
+      this.error = "Could not find roles"
+    });
     if (roleInformation && roleInformation.length > 0) {
       this.roles = [];
       roleInformation.forEach((role) => {
@@ -61,7 +68,13 @@ export class TeamRolesComponent implements OnInit {
         }
         this.roles.push(roleObject);
       });
-      const allotedRoles: any[] = await this.roleService.getTeamRoles(this.teamId).toPromise();
+      const allotedRoles: any[] = 
+        await this.roleService.getTeamRoles(this.teamId)
+        .toPromise()
+        .catch(error=>{
+            this.displayError = true;
+            this.error = "Could not find team roles"
+        });
       if(allotedRoles && allotedRoles.length > 0 ) {
         allotedRoles.forEach((allotedRole) => {
           const index: number = this.roles.findIndex(role => role.id == allotedRole?.id);
@@ -83,7 +96,8 @@ export class TeamRolesComponent implements OnInit {
       await this.getAllRoles();
     },
     error => {
-      console.log(error);
+      this.displayError = true;
+      this.error = "Could not update roles"
     })
   }
 

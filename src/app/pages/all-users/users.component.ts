@@ -15,6 +15,7 @@ export class UsersComponent implements OnInit {
   error: string;
   userRoles: DropdownDTO[];
   genders: DropdownDTO[];
+  displayError: boolean = false;
 
   constructor(
     private readonly sudoService: SudoService,
@@ -77,6 +78,10 @@ export class UsersComponent implements OnInit {
     this.sudoService.updateUser(user.id, updateUserObject).subscribe((userDetails) => {
       console.log(userDetails);
       this.getAllUsers();
+    },
+    error => {
+      this.displayError = true;
+      this.error = "Could not update user"
     });
   }
 
@@ -120,6 +125,10 @@ export class UsersComponent implements OnInit {
     this.sudoService.deleteUser(userId).subscribe((user) => {
       console.log(user);
       this.getAllUsers();
+    },
+    error => {
+      this.displayError = true;
+      this.error = "Could not delete user"
     });
   }
 

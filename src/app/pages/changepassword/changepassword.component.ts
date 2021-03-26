@@ -71,7 +71,7 @@ export class ChangePasswordComponent implements OnInit {
     this.checkPermissions();
     this.resetPasswordForm = this.formBuilder.group({
       currentPassword: ['', Validators.required,],
-      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      newPassword: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
     }, {
       validator: this.mustMatch('newPassword', 'confirmPassword')
@@ -123,10 +123,7 @@ export class ChangePasswordComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
-    if (this.resetPasswordForm.invalid) {
-      console.error('Invalid Data');
-    }
-    else {
+    if (!this.resetPasswordForm.invalid) {
       this.authenticationService.changePassword(
         this.resetPasswordForm.value.currentPassword,
         this.resetPasswordForm.value.newPassword).subscribe(
@@ -139,7 +136,6 @@ export class ChangePasswordComponent implements OnInit {
         },
         error => {
           this.error = error;
-          console.error(error);
         }
       );
     }

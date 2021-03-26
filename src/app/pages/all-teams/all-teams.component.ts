@@ -18,6 +18,7 @@ export class AllTeamsComponent implements OnInit {
   userRoles: DropdownDTO[];
   genders: DropdownDTO[];
   createTeamName: string;
+  displayError: boolean = false;
 
   constructor(
     private readonly authenticationService: AuthenticationService,
@@ -41,6 +42,10 @@ export class AllTeamsComponent implements OnInit {
     this.teamService.updateTeam(team.id, team.name).subscribe((teamDetails) => {
       console.log(teamDetails);
       this.getAllTeams();
+    },
+    error => {
+      this.displayError = true;
+      this.error = "Could not update team"
     });
   }
 
@@ -91,6 +96,10 @@ export class AllTeamsComponent implements OnInit {
     this.teamService.createTeam(this.createTeamName).subscribe((teamDetails) => {
       console.log(teamDetails);
       this.getAllTeams();
+    },
+    error => {
+      this.displayError = true;
+      this.error = "Could not add team"
     });
     this.authenticationService.refreshAccessToken().subscribe((data) => {
       console.log(data);

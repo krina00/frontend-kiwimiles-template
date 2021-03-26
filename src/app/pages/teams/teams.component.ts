@@ -18,6 +18,7 @@ export class TeamsComponent implements OnInit {
   memberships: MembershipDTO[];
   createTeamName: string;
   error: string;
+  private displayError: boolean = false;
 
   constructor(
     private readonly authenticationService: AuthenticationService,
@@ -30,7 +31,8 @@ export class TeamsComponent implements OnInit {
       this.userName = user.name;
     },
       (error) => {
-        console.error("Failed to get user profile");
+        this.displayError = true;
+        this.error = "Failed to get user profile"
       }
     );
   }
@@ -46,13 +48,17 @@ export class TeamsComponent implements OnInit {
 
   private createTeam(): void {
     if (!this.createTeamName) {
-      this.error = "team name is required";
+      this.error = "Team name is required";
       return;
     }
     this.error = null;
     this.teamService.createTeam(this.createTeamName).subscribe((teamDetails) => {
       console.log(teamDetails);
       this.getAllMemberships();
+    },
+    error =>{
+      this.displayError = true;
+      this.error = "Could not add team"
     });
     this.authenticationService.refreshAccessToken().subscribe((data) => {
       console.log(data);
@@ -70,6 +76,10 @@ export class TeamsComponent implements OnInit {
     this.teamService.updateTeam(teamId, this.memberships[index].group.name).subscribe((teamDetails) => {
       console.log(teamDetails);
       this.getAllMemberships();
+    },
+    error =>{
+      this.displayError = true;
+      this.error = "Could not update team"
     });
   }
 
@@ -110,8 +120,11 @@ export class TeamsComponent implements OnInit {
 
   private deleteTeam(teamId: number): void {
     this.teamService.deleteTeam(teamId).subscribe((teamDetails) => {
-      console.log(teamDetails);
       this.getAllMemberships();
+    },
+    error =>{
+      this.displayError = true;
+      this.error = "Could not delete team"
     });
   }
 

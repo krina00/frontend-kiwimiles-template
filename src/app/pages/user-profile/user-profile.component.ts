@@ -20,6 +20,8 @@ export class UserProfileComponent implements OnInit {
   hasEmailReadPermission: boolean = false;
   hasProfileWritePermission: boolean = false;
   hasEmailWritePermission: boolean = false;
+  displayError: boolean = false;
+  error: string;
   genders: GenderDTO[] = [
     { label: 'Male', type: 'MALE' },
     { label: 'Female', type: 'FEMALE' },
@@ -45,7 +47,8 @@ export class UserProfileComponent implements OnInit {
         this.user.email = emailData[0].email;
       }
       else {
-        console.error('No emails found');
+          this.displayError = true;
+          this.error = "Could not find email"
       }
     }
     else {
@@ -88,7 +91,8 @@ export class UserProfileComponent implements OnInit {
         this.editable = false;
       },
       error => {
-        console.error(error);
+        this.displayError = true;
+        this.error = "Could not update user"
       }
     )
   }

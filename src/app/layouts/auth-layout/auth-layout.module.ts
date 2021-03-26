@@ -25,6 +25,7 @@ import { PasswordResetPopupComponent } from '../../pages/password-reset-popup/pa
 import { RegistrationConfirmationPopupComponent } from 'src/app/pages/registration-confirmation-popup/registration-confirmation-popup.component';
 import { LoginOAuthComponent } from 'src/app/pages/login-oauth/login-oauth.component';
 import { TooltipModule } from 'primeng/tooltip';
+import { VerifyEmailComponent } from 'src/app/pages/verify-email/verify-email.component';
 
 @NgModule({
   imports: [
@@ -55,7 +56,8 @@ import { TooltipModule } from 'primeng/tooltip';
     SmsOTPDialogComponent,
     EmailOTPDialogComponent,
     PasswordResetPopupComponent,
-    RegistrationConfirmationPopupComponent
+    RegistrationConfirmationPopupComponent,
+    VerifyEmailComponent
   ],
   exports: [
     ChangePasswordComponent

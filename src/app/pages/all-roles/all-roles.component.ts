@@ -15,6 +15,7 @@ export class AllRolesComponent implements OnInit {
   private createRoleName: string;
   private roles: RoleDTO[];
   private error: string;
+  displayError: boolean = false;
 
   constructor(
     private readonly roleService: RoleService,
@@ -53,12 +54,20 @@ export class AllRolesComponent implements OnInit {
     this.error = null;
     this.roleService.addRole({name: this.createRoleName}).subscribe(()=>{
       this.getAllRoles();
+    },
+    error => {
+      this.displayError = true;
+      this.error = "Could not add role"
     });
   }
 
   deleteRole(roleId: number): void {
     this.roleService.deleteRole(roleId).subscribe(()=>{
       this.getAllRoles();
+    },
+    error => {
+      this.displayError = true;
+      this.error = "Could not delete role"
     });
   }
 }

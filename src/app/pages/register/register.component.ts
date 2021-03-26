@@ -20,6 +20,7 @@ export class RegisterComponent implements OnInit {
   submitted = false;
   active = true;
   user: User;
+  error: string;
 
   constructor(private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -72,6 +73,14 @@ export class RegisterComponent implements OnInit {
     }
     this.authenticationService.register(this.user).subscribe(()=>{
       this.router.navigate(['/registration-completion-window']);
+    },
+    error => {
+      if (error.status == 409) {
+        this.error = "This user has already been registered";
+      }
+      else {
+        this.error = "Signup Error";
+      }
     });
     this.active = false;
   }

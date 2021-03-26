@@ -137,6 +137,10 @@ export class AuthenticationService extends BaseService {
     return this.http.post(this.API_URL + '/auth/register', user, this.getHttpOptions());
   }
 
+  emailVerification(token: string): Observable<any> {
+    return this.http.post(this.API_URL + '/auth/verify-email', {token: token}, this.getHttpOptions());
+  }
+
   passwordSet(user: User): Observable<any> {
     return this.http.post(this.API_URL + '/api/user/password', user, this.getHttpOptions());
   }
