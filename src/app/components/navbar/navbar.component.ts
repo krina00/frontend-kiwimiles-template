@@ -14,7 +14,8 @@ export class NavbarComponent implements OnInit {
   public focus;
   public listTitles: any[];
   public location: Location;
-  private userName: string;
+  private userName: string = 'unknown';
+  private userProfilePicture: string = 'assets/img/theme/default-profile-icon.png'; 
   constructor(
     location: Location,
     private element: ElementRef,
@@ -35,6 +36,7 @@ export class NavbarComponent implements OnInit {
         }
         else {
           this.userName = userDetails.name ? userDetails.name : 'unknown';
+          this.userProfilePicture = userDetails.profilePictureUrl
         }
       });
     }
