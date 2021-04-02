@@ -25,13 +25,14 @@
         <tr>
           <th style="width:10%">#</th>
           <th style="width:20%">Name</th>
-          <th style="width:20%">Created On</th>
-          <th style="width:15%"></th>
+          <th style="width:20%">Parent Team</th>
+          <th style="width:30%">Created On</th>
+          <th></th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" class="text-center" let-team let-i="rowIndex">
-        <tr>
+        <tr *ngIf="team.isDefault" style="background-color:#dcdfe3">
           <td style="width:10%">
             {{i+1}}
           </td>
@@ -43,12 +44,43 @@
             <input pInputText id="teamName" class="p-inputtext-sm" [(ngModel)]="team.name"
                    placeholder="team name" />
           </td>
-          <td style="width:20%">{{team.createdOn}}</td>
-          <td *ngIf="!team.updatable" style="width:15%">
+          <td style="width:20%">
+            {{team.parentTeam}}
+          </td>
+          <td style="width:30%">{{team.createdOn}}</td>
+          <td *ngIf="!team.updatable && !team.isDefault">
             <i class="fa fa-user m-3 text-blue" (click)="teamDetails(team.id)"></i>
             <i class="fa fa-universal-access m-3 " (click)="teamRoleDetails(team.id)"></i>
             <i class="fas fa-edit m-3 text-info" aria-hidden="true" (click)="editTeam(team.id)"></i>
             <i class="fas fa-trash-alt m-3 text-danger" aria-hidden="true" (click)="deleteTeam(team.id)"></i>
+          </td>
+          <td *ngIf="team.updatable" style="width:15%">
+            <i class="fas fa-save m-3 text-blue" aria-hidden="true" (click)="updateTeam(team)"></i>
+            <i class="fa fa-times m-3 text-danger" (click)="closeEditTeam(team.id)"></i>
+          </td>
+          <td *ngIf="team.isDefault"></td>
+        </tr>
+        <tr *ngIf="!team.isDefault">
+          <td style="width:10%">
+            {{i+1}}
+          </td>
+          <td *ngIf="!team.updatable" style="width:20%">
+            <img src={{team.groupPictureUrl}} style="height:inherit; width:8%;" />
+            {{team.name}}
+          </td>
+          <td *ngIf="team.updatable" style="width:20%">
+            <input pInputText id="teamName" class="p-inputtext-sm" [(ngModel)]="team.name"
+                   placeholder="team name" />
+          </td>
+          <td style="width:20%">
+            {{team.parentTeam}}
+          </td>
+          <td style="width:30%">{{team.createdOn}}</td>
+          <td *ngIf="!team.updatable">
+            <i *ngIf="!team.isDefault" class="fa fa-user m-3 text-blue" (click)="teamDetails(team.id)"></i>
+            <i class="fa fa-universal-access m-3 " (click)="teamRoleDetails(team.id)"></i>
+            <i *ngIf="!team.isDefault" class="fas fa-edit m-3 text-info" aria-hidden="true" (click)="editTeam(team.id)"></i>
+            <i *ngIf="!team.isDefault" class="fas fa-trash-alt m-3 text-danger" aria-hidden="true" (click)="deleteTeam(team.id)"></i>
           </td>
           <td *ngIf="team.updatable" style="width:15%">
             <i class="fas fa-save m-3 text-blue" aria-hidden="true" (click)="updateTeam(team)"></i>
@@ -62,11 +94,15 @@
     </p-dialog>
     <div class="mt-6">
       <span class="mr-4">
-        <label for="teamName" class="mr-2 text-white">Team Name:</label>
+        <label for="teamName" class="mx-2 text-white">Team Name:</label>
         <input pInputText id="teamName" class="p-inputtext" [(ngModel)]="createTeamName" placeholder="i.e. xyz" />
         <span *ngIf="error" class="text-danger font-weight-bold m-2">{{error}}</span>
+        <label class="mx-3 text-white">Select Parent: </label>
+        <p-dropdown appendTo="body" [options]="parentTeamOptions"
+         [(ngModel)]="selectedParent" optionLabel="name">
+        </p-dropdown>
       </span>
-      <span class="ml-4">
+      <span class="mx-4">
         <button pButton type="button" class="p-button p-button-help p-button-rounded mt-4" label="Add new team"
           (click)="createTeam()">
         </button>

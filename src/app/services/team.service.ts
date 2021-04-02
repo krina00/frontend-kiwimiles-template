@@ -8,18 +8,18 @@ import { BaseService } from './base.service';
 })
 export class TeamService extends BaseService {
 
-
   //teams
   public getAllMemberships(): Observable<object> {
 
     return this.http.get(this.API_URL + `/users/userId/memberships`, this.getHttpOptions());
   }
 
-  public createTeam(teamName: string): Observable<object> {
+  public createTeam(teamName: string, parentTeamId?: number): Observable<object> {
 
     return this.http.post(this.API_URL + `/users/userId/memberships`,
       {
         name: teamName,
+        parentTeamId: parentTeamId,
         autoJoinDomain: true,
         forceTwoFactor: true
       }, this.getHttpOptions());

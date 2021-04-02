@@ -3,4 +3,5 @@ export class RoleDTO {
   name: string;
   isUpdatable: boolean;
   isAllocated: boolean;
+  isDefault?: boolean;
 }

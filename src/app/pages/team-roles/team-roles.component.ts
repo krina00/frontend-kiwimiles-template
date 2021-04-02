@@ -28,7 +28,8 @@ export class TeamRolesComponent implements OnInit {
   private isAllocateAllRoles: boolean = false;
   private error: string;
   private displayError: boolean = false;
-
+  private isDefaultTeam: boolean = false;
+  
   constructor(
     private readonly teamService: TeamService,
     private readonly roleService: RoleService,
@@ -44,8 +45,9 @@ export class TeamRolesComponent implements OnInit {
   async ngOnInit() {
     const user: {id: number} = await this.userService.getUserProfile().toPromise();
     this.userId = user.id;
-    this.teamService.getTeamDetails(this.teamId).subscribe((team: { name: string }) => {
+    this.teamService.getTeamDetails(this.teamId).subscribe((team: { name: string, isDefault: boolean }) => {
       this.teamName = team.name;
+      this.isDefaultTeam = team.isDefault;
     })
     this.getAllRoles();
   }

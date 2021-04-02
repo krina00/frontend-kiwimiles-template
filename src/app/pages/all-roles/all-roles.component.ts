@@ -26,7 +26,7 @@ export class AllRolesComponent implements OnInit {
     this.getAllRoles();
   }
 
-  async getAllRoles(): Promise<void> {
+  private async getAllRoles(): Promise<void> {
     const roleInformation: any[] = await this.roleService.getAllRoles().toPromise();
     this.roles = [];
     if (roleInformation && roleInformation.length > 0) {
@@ -35,18 +35,20 @@ export class AllRolesComponent implements OnInit {
           id: role.id,
           name: role.name, 
           isUpdatable: true,
-          isAllocated: false
+          isAllocated: false,
+          isDefault: role.isDefault
         }
         this.roles.push(roleObject);
       });
+      this.roles = this.sortRoles(this.roles);
     } 
   }
 
-  getAllPermissions(roleId: number): void {
+  private getAllPermissions(roleId: number): void {
     this.router.navigate([`/admin/roles/${roleId}`])
   }
 
-  addRole(): void {
+  private addRole(): void {
     if (!this.createRoleName) {
       this.error = "Role name is required";
       return;
@@ -61,7 +63,7 @@ export class AllRolesComponent implements OnInit {
     });
   }
 
-  deleteRole(roleId: number): void {
+  private deleteRole(roleId: number): void {
     this.roleService.deleteRole(roleId).subscribe(()=>{
       this.getAllRoles();
     },
@@ -69,5 +71,12 @@ export class AllRolesComponent implements OnInit {
       this.displayError = true;
       this.error = "Could not delete role"
     });
+  }
+
+  private sortRoles(roles: RoleDTO[]): RoleDTO[]{
+    return roles.sort((role1: RoleDTO, role2: RoleDTO) => {
+      if(role1.isDefault && !role2.isDefault) return -1;
+      return 1;
+    })
   }
 }

@@ -5,4 +5,6 @@ export class GroupDTO {
   groupPictureUrl?: string;
   createdOn?: string;
   roles ?: string[];
+  parentTeam ?: string; 
+  isDefault ?: boolean;
 }

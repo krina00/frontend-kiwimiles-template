@@ -66,13 +66,16 @@
     <p-table *ngIf="givenRoles && !selectAll" [value]="givenRoles" styleClass="p-datatable-striped">
       <ng-template pTemplate="header">
         <tr>
-          <th colspan="3">
+          <th *ngIf= "!isDefaultTeam" colspan="3">
             <center style="font-size: larger">{{teamName}} Roles</center>
             <label class="ml-4" style="float: right;">Update Roles</label>
             <label class="switch" style="float: right;">
               <input type="checkbox" [(ngModel)]="selectAll" checked>
               <span class="slider round"></span>
             </label>
+          </th>
+          <th *ngIf= "isDefaultTeam" colspan="3">
+            <center style="font-size: larger">{{teamName}} Roles</center>
           </th>
         </tr>
         <tr *ngIf="givenRoles.length == 0">

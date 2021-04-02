@@ -1,3 +1,4 @@
+import { NONE_TYPE } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SudoService } from 'src/app/services/sudo.service';
@@ -17,6 +18,8 @@ export class AllTeamsComponent implements OnInit {
   error: string;
   userRoles: DropdownDTO[];
   genders: DropdownDTO[];
+  parentTeamOptions: DropdownDTO[];
+  selectedParent: DropdownDTO = {name: "None", code: null};
   createTeamName: string;
   displayError: boolean = false;
 
@@ -40,7 +43,6 @@ export class AllTeamsComponent implements OnInit {
 
   private updateTeam(team: GroupDTO): void {
     this.teamService.updateTeam(team.id, team.name).subscribe((teamDetails) => {
-      console.log(teamDetails);
       this.getAllTeams();
     },
     error => {
@@ -58,17 +60,22 @@ export class AllTeamsComponent implements OnInit {
   private getAllTeams(): void {
     this.sudoService.getAllAvailableTeams().subscribe((teamInformation: any[]) => {
       this.teams = [];
+      this.parentTeamOptions = [{name: "None", code: null}];
       if (teamInformation && teamInformation.length > 0) {
         teamInformation.forEach((team) => {
           const membershipObject: GroupDTO = {
             id: team.id,
             name: team.name,
+            parentTeam: team.parent?.name ?? null,
             groupPictureUrl: team.groupPictureUrl,
             createdOn: this.dateToString(team.createdAt),
+            isDefault: team.isDefault
           }
           this.teams.push(membershipObject);
+          this.parentTeamOptions.push({name: team.name, code: (team.id).toString()})
         })
       }
+      this.teams = this.sortTeams(this.teams);
       console.log(this.teams);
     })
   }
@@ -93,8 +100,8 @@ export class AllTeamsComponent implements OnInit {
       return;
     }
     this.error = null;
-    this.teamService.createTeam(this.createTeamName).subscribe((teamDetails) => {
-      console.log(teamDetails);
+    const parentId: number = this.selectedParent.code ? +this.selectedParent.code : null;
+    this.teamService.createTeam(this.createTeamName, parentId).subscribe((teamDetails) => {
       this.getAllTeams();
     },
     error => {
@@ -105,6 +112,17 @@ export class AllTeamsComponent implements OnInit {
       console.log(data);
       //history.go(0);
     });
+  }
+
+  private sortTeams(teams: GroupDTO[]): GroupDTO[]{
+    return teams.sort((team1: GroupDTO, team2: GroupDTO) => {
+      if(team1.isDefault && !team2.isDefault) return -1;
+      else if(team1.isDefault == team2.isDefault){
+        if(team1.createdOn < team2.createdOn) return 1;
+        return -1;
+      }
+      return 1;
+    })
   }
 
   dateToString(dateObj: string): string {
