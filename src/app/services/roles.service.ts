@@ -8,9 +8,11 @@ import { BaseService } from './base.service';
 })
 export class RoleService extends BaseService {
 
-  public getAllRoles(): Observable<any> {
-
-    return this.http.get(this.API_URL + `/roles/`, this.getHttpOptions());
+  public getAllRoles(skip?: number, take?: number): Observable<any> {
+    if(isNaN(skip) || isNaN(take)) {
+      return this.http.get(this.API_URL + `/roles/`, this.getHttpOptions());
+    }
+    return this.http.get(this.API_URL + `/roles?skip=${skip}&take=${take}`, this.getHttpOptions());
   }
 
   public getRoleDetails(roleId:number): Observable<any> {
@@ -24,7 +26,7 @@ export class RoleService extends BaseService {
   }
 
   public getTeamRoles(teamId: number): Observable<any> {
-
+    
     return this.http.get(this.API_URL + `/roles/group/${teamId}`, this.getHttpOptions());
   }
 
@@ -33,9 +35,13 @@ export class RoleService extends BaseService {
     return this.http.put(this.API_URL + `/roles/group/${teamId}`, roles ,this.getHttpOptions());
   }
 
-  public getRoleScopes(roleId:number): Observable<any> {
+  public getRoleScopes(roleId:number, skip?: number, take?:number): Observable<any> {
 
-    return this.http.get(this.API_URL + `/roles/${roleId}/scopes`, this.getHttpOptions());
+    if(isNaN(skip) || isNaN(take)) {
+      return this.http.get(this.API_URL + `/roles/${roleId}/scopes`, this.getHttpOptions());
+    }
+    return this.http.get(this.API_URL + `/roles/${roleId}/scopes?skip=${skip}&take=${take}`,
+     this.getHttpOptions());
   }
 
   public updateRoleScopes(roleId: number, scopes: {name: string}[]): Observable<any> {
@@ -44,8 +50,8 @@ export class RoleService extends BaseService {
   }
 
   public getAllScopes(): Observable<any> {
-
-    return this.http.get(this.API_URL + `/scopes`, this.getHttpOptions());
+    
+    return this.http.get(this.API_URL + `/scopes/`, this.getHttpOptions());
   }
 
   public deleteRole(roleId: number): Observable<any> {

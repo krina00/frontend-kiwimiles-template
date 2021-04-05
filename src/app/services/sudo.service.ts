@@ -10,9 +10,11 @@ import { BaseService } from './base.service';
 export class SudoService extends BaseService {
 
     // users
-    public getUsers(): Observable<any> {
-
-        return this.http.get(this.API_URL + `/users/`, this.getHttpOptions());
+    public getUsers(skip?: number, take?: number): Observable<any> {
+        if(isNaN(skip) || isNaN(take)){
+            return this.http.get(this.API_URL + `/users/`, this.getHttpOptions());
+        }
+        return this.http.get(this.API_URL + `/users?skip=${skip}&take=${take}`, this.getHttpOptions());
     }
 
     public updateUser(userId: number, updateUserObject: UpdateUserDTO): Observable<any> {
@@ -37,9 +39,11 @@ export class SudoService extends BaseService {
 
     //teams
 
-    public getAllAvailableTeams(): Observable<object> {
-
-        return this.http.get(this.API_URL + `/groups`, this.getHttpOptions());
+    public getAllAvailableTeams(skip: number, take: number): Observable<object> {
+        if(isNaN(skip) || isNaN(take)) {
+            return this.http.get(this.API_URL + `/groups/`, this.getHttpOptions());
+        }
+        return this.http.get(this.API_URL + `/groups?skip=${skip}&take=${take}`, this.getHttpOptions());
     }
 
     private getHttpOptions(): { headers: HttpHeaders } {

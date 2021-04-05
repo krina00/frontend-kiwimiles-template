@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LazyLoadEvent } from 'primeng/api';
+import { ROWS_PER_PAGE_OPTIONS } from 'src/app/constants/pagination.constant';
 import { RoleDTO } from 'src/app/dto/role.dto';
+import { Sorting, SortingRuleFormat } from 'src/app/helpers/sorting';
 import { UserService } from 'src/app/services';
 import { RoleService } from 'src/app/services/roles.service';
 import { TeamService } from '../../services/team.service';
@@ -16,6 +19,11 @@ export class AllRolesComponent implements OnInit {
   private roles: RoleDTO[];
   private error: string;
   displayError: boolean = false;
+  private skip: number;
+  private take: number;
+  private totalRecords: number;
+  private numberOfRowsPerPageOptions: {rows: number}[] = ROWS_PER_PAGE_OPTIONS;
+  private numberOfRowsPerPage: number = 5;
 
   constructor(
     private readonly roleService: RoleService,
@@ -23,12 +31,15 @@ export class AllRolesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getAllRoles();
+    //this.getAllRoles();
   }
 
   private async getAllRoles(): Promise<void> {
-    const roleInformation: any[] = await this.roleService.getAllRoles().toPromise();
+    const roleData: {roles: any[], length: number} = await this.roleService.getAllRoles(this.skip, this.take).toPromise();
     this.roles = [];
+    const roleInformation = roleData.roles;
+    this.totalRecords = roleData.length;
+    console.log(roleInformation)
     if (roleInformation && roleInformation.length > 0) {
       roleInformation.forEach((role) => {
         const roleObject: RoleDTO = { 
@@ -36,7 +47,8 @@ export class AllRolesComponent implements OnInit {
           name: role.name, 
           isUpdatable: true,
           isAllocated: false,
-          isDefault: role.isDefault
+          isDefault: role.isDefault,
+          createdAt: role.createdAt
         }
         this.roles.push(roleObject);
       });
@@ -73,10 +85,17 @@ export class AllRolesComponent implements OnInit {
     });
   }
 
-  private sortRoles(roles: RoleDTO[]): RoleDTO[]{
-    return roles.sort((role1: RoleDTO, role2: RoleDTO) => {
-      if(role1.isDefault && !role2.isDefault) return -1;
-      return 1;
-    })
+  private sortRoles(roles: RoleDTO[]): RoleDTO[] {
+    const sortingRules: SortingRuleFormat[] = [
+      {field: "createdAt", order: "DESC"},
+      {field: "isDefault", order: "DESC"},
+    ]
+    return Sorting.dataSorting(roles, sortingRules);
+  }
+
+  private loadRoles(tableElement){
+    this.skip = tableElement._first;
+    this.take = this.numberOfRowsPerPage;
+    this.getAllRoles();
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ROWS_PER_PAGE_OPTIONS } from 'src/app/constants/pagination.constant';
 import { RoleDTO } from 'src/app/dto/role.dto';
 import { UserService } from 'src/app/services';
 import { RoleService } from 'src/app/services/roles.service';
@@ -24,11 +25,17 @@ export class TeamRolesComponent implements OnInit {
   private memberIds: number[];
   private roles: RoleDTO[];
   private givenRoles: RoleDTO[];
+  private givenRolesToDisplay: RoleDTO[];
   private selectAll:boolean = false;
   private isAllocateAllRoles: boolean = false;
   private error: string;
   private displayError: boolean = false;
   private isDefaultTeam: boolean = false;
+  private skip: number;
+  private take: number;
+  private totalRecords: number;
+  private numberOfRowsPerPageOptions: {rows: number}[] = ROWS_PER_PAGE_OPTIONS;
+  private numberOfRowsPerPage: number = 5;
   
   constructor(
     private readonly teamService: TeamService,
@@ -53,12 +60,13 @@ export class TeamRolesComponent implements OnInit {
   }
 
   private async getAllRoles(): Promise<void> {
-    const roleInformation: any[] = await this.roleService.getAllRoles()
+    const roleInformationData: {roles: any[], length: number} = await this.roleService.getAllRoles()
     .toPromise()
     .catch(error => {
       this.displayError = true;
       this.error = "Could not find roles"
     });
+    const roleInformation = roleInformationData.roles;
     if (roleInformation && roleInformation.length > 0) {
       this.roles = [];
       roleInformation.forEach((role) => {
@@ -70,13 +78,15 @@ export class TeamRolesComponent implements OnInit {
         }
         this.roles.push(roleObject);
       });
-      const allotedRoles: any[] = 
+      const allotedRolesData: {roles: any[], length: number} = 
         await this.roleService.getTeamRoles(this.teamId)
         .toPromise()
         .catch(error=>{
             this.displayError = true;
             this.error = "Could not find team roles"
         });
+      const allotedRoles = allotedRolesData.roles;
+      this.totalRecords = allotedRolesData.length;
       if(allotedRoles && allotedRoles.length > 0 ) {
         allotedRoles.forEach((allotedRole) => {
           const index: number = this.roles.findIndex(role => role.id == allotedRole?.id);
@@ -96,6 +106,8 @@ export class TeamRolesComponent implements OnInit {
 
     this.roleService.updateTeamRoles(this.teamId, roles).subscribe(async ()=>{
       await this.getAllRoles();
+      this.givenRolesToDisplay = this.givenRoles.slice(0, this.numberOfRowsPerPage);
+      this.selectAll = false;
     },
     error => {
       this.displayError = true;
@@ -103,13 +115,19 @@ export class TeamRolesComponent implements OnInit {
     })
   }
 
-  private getAllPermissions(roleId: number): void{
-    console.log(roleId);
+  private getAllPermissions(roleId: number): void {
     this.router.navigate([`/admin/roles/${roleId}`])
   }
 
-  private selectAllRoles(){
+  private selectAllRoles() {
     if(this.isAllocateAllRoles) this.roles.forEach(role => role.isAllocated = true); 
     else this.roles.forEach(role => role.isAllocated = false);
+  }
+
+  private async loadTeamRoles(tableElement) {
+    const skip = tableElement._first;
+    const take = this.numberOfRowsPerPage;
+    if(!this.givenRoles) await this.getAllRoles();
+    this.givenRolesToDisplay = this.givenRoles.slice(skip, skip + take);
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core'; 
 import { ActivatedRoute } from '@angular/router';
+import { ROWS_PER_PAGE_OPTIONS } from 'src/app/constants/pagination.constant';
 import { RoleService } from 'src/app/services/roles.service';
 @Component({
   selector: 'app-role-details',
@@ -14,8 +15,12 @@ export class RoleDetailsComponent implements OnInit {
   private isGrantAllPermissions: boolean = false;
   private scopes: {id: number, name: string, privileges: string, isGiven: boolean}[];
   private permittedScopes: {id: number, name: string, privileges: string, isGiven: boolean}[];
+  private permittedScopesToDisplay: {id: number, name: string, privileges: string, isGiven: boolean}[];
   private displayError: boolean = false;
   private error: string;
+  private totalRecords: number;
+  private numberOfRowsPerPageOptions: {rows: number}[] = ROWS_PER_PAGE_OPTIONS;
+  private numberOfRowsPerPage: number = 5;
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -36,26 +41,30 @@ export class RoleDetailsComponent implements OnInit {
   }
 
   private async getScopes(): Promise<void> {
-    const scopeInformation: {id: number, name: string, privileges: string}[] = 
+    const scopeInformationData: {scopes: {id: number, name: string, privileges: string}[], length: number} = 
       await this.roleService.getAllScopes()
       .toPromise()
       .catch(error => {
         this.displayError = true;
         this.error = "Could not find scopes"
       });
+    const scopeInformation = scopeInformationData.scopes;
     if (scopeInformation && scopeInformation.length > 0) {
       this.scopes = [];
       scopeInformation.forEach((scope) => {
         this.scopes.push({id: scope.id, name: scope.name, privileges: scope.privileges, isGiven: false});
       });
     }
-    const allotedScopes: {id: number, name: string, privileges: string}[] =
+    const allotedScopesData: {scopes: {id: number, name: string, privileges: string}[]
+      , length: number} =
      await this.roleService.getRoleScopes(this.roleId).toPromise()
      .catch(error => {
       this.displayError = true;
       this.error = "Could not find scopes"
     });
-    
+    const allotedScopes = allotedScopesData.scopes;
+    this.totalRecords = allotedScopesData.length;
+
     if(allotedScopes && allotedScopes.length > 0 ) {
       allotedScopes.forEach((allotedScope) => {
         const index: number = this.scopes.findIndex(scope => scope.id == allotedScope?.id);
@@ -74,6 +83,8 @@ export class RoleDetailsComponent implements OnInit {
 
     this.roleService.updateRoleScopes(this.roleId, scopes).subscribe(async ()=>{
       await this.getScopes();
+      this.permittedScopesToDisplay = this.permittedScopes.slice(0, this.numberOfRowsPerPage);
+      this.selectAll = false;
     },
     error => {
       this.displayError = true;
@@ -84,5 +95,12 @@ export class RoleDetailsComponent implements OnInit {
   private selectAllPermissions() {
     if(this.isGrantAllPermissions) this.scopes.forEach(scope => scope.isGiven = true); 
     else this.scopes.forEach(scope => scope.isGiven = false);
+  }
+
+  private async loadScopes(tableElement){
+    const skip: number = tableElement._first;
+    const take: number = this.numberOfRowsPerPage;
+    if(!this.permittedScopes) await this.getScopes();
+    this.permittedScopesToDisplay = this.permittedScopes.slice(skip, skip + take);
   }
 }

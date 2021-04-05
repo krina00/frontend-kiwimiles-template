@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LazyLoadEvent } from 'primeng/api';
+import { ROWS_PER_PAGE_OPTIONS } from 'src/app/constants/pagination.constant';
+import { USER_GENDERS, USER_TYPES } from 'src/app/constants/user.constant';
+import { DateFormatting } from 'src/app/helpers/date-formatting';
+import { Sorting, SortingRuleFormat } from 'src/app/helpers/sorting';
 import { SudoService } from 'src/app/services/sudo.service';
 import { DropdownDTO } from '../../dto/dropdown.dto';
 import { DisplayUserDTO, UpdateUserDTO } from '../../dto/user.dto';
@@ -11,12 +16,16 @@ import { DisplayUserDTO, UpdateUserDTO } from '../../dto/user.dto';
 })
 export class UsersComponent implements OnInit {
 
-  users: DisplayUserDTO[];
-  error: string;
-  userRoles: DropdownDTO[];
-  genders: DropdownDTO[];
-  displayError: boolean = false;
-
+  private users: DisplayUserDTO[];
+  private error: string;
+  private userRoles: DropdownDTO[] =  USER_TYPES;
+  private genders: DropdownDTO[] = USER_GENDERS;
+  private displayError: boolean = false;
+  private skip: number;
+  private take: number;
+  private totalRecords: number;
+  private numberOfRowsPerPageOptions: {rows: number}[] = ROWS_PER_PAGE_OPTIONS;
+  private numberOfRowsPerPage: number = 5;
   constructor(
     private readonly sudoService: SudoService,
     private readonly router: Router,
@@ -25,43 +34,6 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getAllUsers();
-    this.setStaticRoles();
-    this.setStaticGenders();
-  }
-
-  private setStaticRoles() {
-    this.userRoles = [
-      {
-        name: "Super Domain",
-        code: "SUDO"
-      },
-      {
-        name: "User",
-        code: "USER"
-      },
-    ]
-  }
-
-  private setStaticGenders() {
-    this.genders = [
-      {
-        name: "Male",
-        code: "MALE"
-      },
-      {
-        name: "Female",
-        code: "FEMALE"
-      },
-      {
-        name: "Non-binary",
-        code: "NON BINARY"
-      },
-      {
-        name: "Prefer Not to say",
-        code: "UNKNOWN"
-      },
-    ]
   }
 
   private editUser(userId: number): void {
@@ -93,9 +65,10 @@ export class UsersComponent implements OnInit {
 
   private getAllUsers(): void {
 
-    this.sudoService.getUsers().subscribe((UserInformation: any[]) => {
-      console.log(UserInformation);
+    this.sudoService.getUsers(this.skip, this.take).subscribe((UserInformationData: {users: any[], length: number}) => {
       this.users = [];
+      const UserInformation = UserInformationData.users;
+      this.totalRecords = UserInformationData.length;
       if (UserInformation && UserInformation.length > 0) {
         UserInformation.forEach((user) => {
           const userObject: DisplayUserDTO = {
@@ -106,18 +79,18 @@ export class UsersComponent implements OnInit {
             gender: user.gender,
             role: user.role,
             status: user.active == true ? 'Active' : 'Inactive',
-            createdOn: this.dateToString(user.createdAt),
+            createdOn: DateFormatting.utcDateToString(user.createdAt),
+            displayTime: DateFormatting.getLocalDateTime12H(user.createdAt),
             updatable: false
           }
           this.users.push(userObject);
         })
       }
-      console.log(this.users);
+      this.users = this.sortUsers(this.users);
     })
   }
 
   private userDetails(userId: number): void {
-    console.log(userId);
     this.router.navigate([`/admin/users/${userId}`]);
   }
 
@@ -132,13 +105,17 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  private dateToString(dateObj: string): string {
-    var dateString: string;
-    var date: string = dateObj.split('T')[0];
-    var time: string = dateObj.split('T')[1];
-    time = time.split('.')[0];
-    dateString = date + '  ' + time + '  UTC'
-    return dateString;
+  private sortUsers(users: DisplayUserDTO[]): DisplayUserDTO[] {
+    const sortingRules: SortingRuleFormat[] = [
+      {field: "createdOn", order: "DESC"},
+    ]
+    return Sorting.dataSorting(users, sortingRules);
+  }
+
+  private loadUsers(tableElement){
+    this.skip = tableElement._first;
+    this.take = this.numberOfRowsPerPage;
+    this.getAllUsers();
   }
 }
 

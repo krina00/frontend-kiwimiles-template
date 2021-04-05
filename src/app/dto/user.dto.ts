@@ -22,6 +22,7 @@ export class DisplayUserDTO {
   contactNo?: string;
   status?: 'Active' | 'Inactive';
   createdOn?: string;
+  displayTime ?: string; 
   updatable: boolean; 
 }
 

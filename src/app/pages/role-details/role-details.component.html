@@ -61,11 +61,18 @@
   
       </p-table>
 
-      <p-table *ngIf="permittedScopes && !selectAll" [value]="permittedScopes" styleClass="p-datatable-striped">
+      <p-table #scopesdt *ngIf="!selectAll" [value]="permittedScopesToDisplay" 
+        styleClass="p-datatable-striped"
+        [lazy]="true" (onLazyLoad)="loadScopes(scopesdt)" 
+        [paginator]="true" [rows]="numberOfRowsPerPage" [totalRecords]="totalRecords">
         <ng-template pTemplate="header">
           <tr>
             <th colspan="2">
               <center style="font-size: larger">{{roleName}} Permissions</center>
+              <p-dropdown appendTo="body" [options]="numberOfRowsPerPageOptions" 
+              (onChange) = "loadScopes(scopesdt)" [(ngModel)]="numberOfRowsPerPage" 
+              optionLabel="rows" optionValue="rows" class="ml-6">
+              </p-dropdown>
               <label class="ml-4" style="float: right;">Update Permissions</label>
               <label class="switch" style="float: right;">
                 <input type="checkbox" [(ngModel)]="selectAll" checked>
@@ -73,12 +80,12 @@
               </label>
             </th>
           </tr>
-          <tr *ngIf="permittedScopes.length == 0">
+          <tr *ngIf="!permittedScopesToDisplay || permittedScopesToDisplay.length == 0">
             <th colspan="2">
               <center>No permissions given</center>
             </th>
           </tr>
-          <tr *ngIf="permittedScopes.length > 0">
+          <tr *ngIf="permittedScopesToDisplay && permittedScopesToDisplay.length > 0">
             <th class="text-center">#</th>
             <th class="text-center">Permissions</th>
             <!-- <th class="text-center">Action</th> -->

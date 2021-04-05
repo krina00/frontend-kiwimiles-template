@@ -1,6 +1,10 @@
 import { NONE_TYPE } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LazyLoadEvent } from 'primeng/api';
+import { ROWS_PER_PAGE_OPTIONS } from 'src/app/constants/pagination.constant';
+import { DateFormatting } from 'src/app/helpers/date-formatting';
+import { Sorting, SortingRuleFormat } from 'src/app/helpers/sorting';
 import { SudoService } from 'src/app/services/sudo.service';
 import { DropdownDTO } from '../../dto/dropdown.dto';
 import { GroupDTO } from '../../dto/group.dto';
@@ -22,6 +26,11 @@ export class AllTeamsComponent implements OnInit {
   selectedParent: DropdownDTO = {name: "None", code: null};
   createTeamName: string;
   displayError: boolean = false;
+  private skip: number;
+  private take: number;
+  private totalRecords: number;
+  private numberOfRowsPerPageOptions: {rows: number}[] = ROWS_PER_PAGE_OPTIONS;
+  private numberOfRowsPerPage: number = 5;
 
   constructor(
     private readonly authenticationService: AuthenticationService,
@@ -33,7 +42,7 @@ export class AllTeamsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getAllTeams();
+    //this.getAllTeams();
   }
 
   private editTeam(teamId: number): void {
@@ -58,9 +67,11 @@ export class AllTeamsComponent implements OnInit {
   }
 
   private getAllTeams(): void {
-    this.sudoService.getAllAvailableTeams().subscribe((teamInformation: any[]) => {
+    this.sudoService.getAllAvailableTeams(this.skip, this.take).subscribe((teamInformationData: {groups: any[], length: number}) => {
       this.teams = [];
       this.parentTeamOptions = [{name: "None", code: null}];
+      const teamInformation = teamInformationData.groups;
+      this.totalRecords = teamInformationData.length;
       if (teamInformation && teamInformation.length > 0) {
         teamInformation.forEach((team) => {
           const membershipObject: GroupDTO = {
@@ -68,7 +79,8 @@ export class AllTeamsComponent implements OnInit {
             name: team.name,
             parentTeam: team.parent?.name ?? null,
             groupPictureUrl: team.groupPictureUrl,
-            createdOn: this.dateToString(team.createdAt),
+            createdOn: DateFormatting.utcDateToString(team.createdAt),
+            displayTime: DateFormatting.getLocalDateTime12H(team.createdAt),
             isDefault: team.isDefault
           }
           this.teams.push(membershipObject);
@@ -76,7 +88,6 @@ export class AllTeamsComponent implements OnInit {
         })
       }
       this.teams = this.sortTeams(this.teams);
-      console.log(this.teams);
     })
   }
 
@@ -109,29 +120,22 @@ export class AllTeamsComponent implements OnInit {
       this.error = "Could not add team"
     });
     this.authenticationService.refreshAccessToken().subscribe((data) => {
-      console.log(data);
       //history.go(0);
     });
   }
 
-  private sortTeams(teams: GroupDTO[]): GroupDTO[]{
-    return teams.sort((team1: GroupDTO, team2: GroupDTO) => {
-      if(team1.isDefault && !team2.isDefault) return -1;
-      else if(team1.isDefault == team2.isDefault){
-        if(team1.createdOn < team2.createdOn) return 1;
-        return -1;
-      }
-      return 1;
-    })
+  private sortTeams(teams: GroupDTO[]): GroupDTO[] {
+    const sortingRules: SortingRuleFormat[] = [
+      {field: "createdOn", order: "DESC"},
+      {field: "isDefault", order: "DESC"},
+    ]
+    return Sorting.dataSorting(teams, sortingRules);
   }
 
-  dateToString(dateObj: string): string {
-    var dateString: string;
-    var date: string = dateObj.split('T')[0];
-    var time: string = dateObj.split('T')[1];
-    time = time.split('.')[0];
-    dateString = date + '  ' + time + '  UTC'
-    return dateString;
+  private loadTeams(tableElement) {
+    this.skip = tableElement._first;
+    this.take = this.numberOfRowsPerPage;
+    this.getAllTeams();
   }
 }
 
