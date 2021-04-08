@@ -141,7 +141,7 @@ export class DateFormatting{
      public static dateStringToUTC(dateTime: Date): string {
         var dateString: string;
         const localDate: Date = dateTime;
-        var dd: string = (localDate.getDate() + 1).toString();
+        var dd: string = (localDate.getDate()).toString();
         if (dd.length == 1) dd = ('0' + dd);
         var mm: string = (localDate.getMonth() + 1).toString();
         if (mm.length == 1) mm = ('0' + mm);
