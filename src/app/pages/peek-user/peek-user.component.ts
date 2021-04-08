@@ -52,6 +52,7 @@ export class PeekUserComponent implements OnInit {
       this.user = {
         name: userDetails.name,
         email: null,
+        profilePictureUrl: userDetails.profilePictureUrl,
         role: userDetails.role,
         gender: userDetails.gender,
         mfaMethod: userDetails.twoFactorMethod,

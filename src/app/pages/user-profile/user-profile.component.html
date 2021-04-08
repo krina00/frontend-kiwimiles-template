@@ -2,13 +2,13 @@
   <!-- Mask -->
   <span class="mask bg-gradient-danger"></span>
   <!-- Header container -->
-  <div class="container-fluid d-flex align-items-center">
+  <div class="container ml-5">
     <div class="row">
       <div class="col-lg-7 col-md-10">
-        <h1 *ngIf="user" class="display-2 text-white">Hello {{user.name.split(' ')[0]}}</h1>
-        <p class="text-white mt-0 mb-5">This is your profile page. You can see the progress you've made with your work and manage your projects or assigned tasks</p>
-        <button *ngIf='!editable && hasProfileWritePermission' pButton type="button" class="p-button p-button-primary p-button-rounded" label="Edit profile" (click)="editable= true"></button>
-        <button *ngIf='editable && hasProfileWritePermission' pButton type="button" class="p-button p-button-secondary p-button-rounded" label="Stop Editing" (click)="stopEditing()"></button>
+        <span *ngIf="user">
+          <img  class="avatar rounded-circle" src = {{user.profilePictureUrl}}/>
+          <span class="text-white ml-3" style="font-size:150%;font-weight: 600;vertical-align: sub;">{{user.name}}</span>
+        </span>
       </div>
     </div>
   </div>
@@ -16,7 +16,7 @@
 <p-dialog header="Error" [(visible)]="displayError" [style]="{'width': '30vw'}" [baseZIndex]="10000">
   <p style="color: red;"><strong>{{error}}</strong></p>
 </p-dialog>
-<div class="container-fluid mt--7">
+<div class="container-fluid mt--7 pb-5">
   <div class="row">
     <div class="col-md-11 order-md-2">
       <div class="card bg-secondary shadow">
@@ -26,7 +26,8 @@
               <h3 class="mb-0">My account</h3>
             </div>
             <div class="col-4 text-right">
-              <a href="#!" class="btn btn-sm btn-primary">Settings</a>
+              <button *ngIf='!editable && hasProfileWritePermission' class="btn btn-sm btn-primary" (click)="editable= true">Edit profile</button>
+              <button *ngIf='editable && hasProfileWritePermission' class="btn btn-sm btn-secondary" (click)="stopEditing()">Stop Editing</button>
             </div>
           </div>
         </div>
@@ -39,7 +40,8 @@
                 <div class="form-group">
                   <label class="form-control-label" for="input-username">Name</label>
                   <span *ngIf="!editable" class="form-control form-control-alternative">{{user.name}}</span>
-                  <input *ngIf="editable" type="text" id="input-username" class="form-control form-control-alternative" [(ngModel)]="user.name" placeholder="name">
+                  <input *ngIf="editable" type="text" id="input-username" class="form-control" 
+                      [(ngModel)]="user.name" style="border: 1px solid #fa4145;" placeholder="name">
                 </div>
               </div>
               <div class="col-md-6">
@@ -54,8 +56,9 @@
                 <div class="form-group">
                   <label class="form-control-label" for="input-first-name">Gender</label>
                   <span *ngIf="!editable" class="form-control form-control-alternative">{{user.gender}}</span>
-                  <div>
-                    <p-dropdown *ngIf="editable" [options]="genders"
+                  <div *ngIf="editable">
+                    <span class="mr-3" style="font-size: 90%;">Select Gender:</span>
+                    <p-dropdown [options]="genders"
                                 [(ngModel)]="user.gender" optionLabel="label" optionValue="type">
                     </p-dropdown>
                   </div>
@@ -74,7 +77,6 @@
                 <div class="form-group">
                   <label class="form-control-label" for="input-last-name">Multi Factor Authentication method</label>
                   <span class="form-control form-control-alternative">{{user.mfaMethod}}</span>
-                  
                 </div>
               </div>
             </div>
@@ -95,7 +97,8 @@
                 <div class="form-group">
                   <label class="form-control-label" for="input-country">Country</label>
                   <span *ngIf="!editable" class="form-control form-control-alternative">{{user.country}}</span>
-                  <input *ngIf="editable" type="text" id="input-country" class="form-control form-control-alternative" [(ngModel)]="user.country" placeholder="New zealand">
+                  <input *ngIf="editable" type="text" id="input-country" class="form-control"
+                     [(ngModel)]="user.country" style="border: 1px solid #fa4145;" placeholder="New zealand">
                 </div>
               </div>
 

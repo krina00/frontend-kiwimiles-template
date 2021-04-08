@@ -16,21 +16,71 @@
   <div class="row justify-content-center">
 
     <p-table #userdt [resizableColumns]="true" [value]="users" styleClass="p-datatable-striped"
-        [lazy]="true" (onLazyLoad)="loadUsers(userdt)" 
+        [lazy]="true" (onLazyLoad)="loadUsers(userdt)" [rowsPerPageOptions]="[5,10,25,50,100]"
         [paginator]="true" [rows]="numberOfRowsPerPage" [totalRecords]="totalRecords">
       <ng-template pTemplate="header">
         <tr>
-          <th>#</th>
+          <th style="width:10%">#</th>
           <th style="width:20%">Name</th>
           <th style="width:20%">Gender</th>
-          <th style="width:20%">User Type</th>
+          <th style="width:25%">User Type</th>
           <th>isActive</th>
-          <th style="width:20%">Added On</th>
+          <th style="width:40%">Added On</th>
+          <th style="width:30%"></th>
+        </tr>
+        <tr>
+          <th style="width:10%"> Filters</th>
+          <th style="width:20%">
+            <span>
+              <input pInputText style="width: 95%;" [(ngModel)]="nameFilterInput" 
+              (keyup.enter) = "applyNameFilter()" (blur) = "applyNameFilter()"
+              class="p-inputtext" placeholder="Filter by name" />
+            </span>
+          </th>
           <th style="width:30%">
-            <p-dropdown appendTo="body" [options]="numberOfRowsPerPageOptions" 
-              (onChange) = "loadUsers(userdt)" [(ngModel)]="numberOfRowsPerPage" 
-              optionLabel="rows" optionValue="rows">
+            <p-dropdown appendTo="body" [options]="genderFilterInputOptions" 
+              [(ngModel)]="genderFilterInput" optionLabel="name"
+              optionValue="code" (onChange)="applyGenderFilter(genderFilterInput)">
             </p-dropdown>
+          </th>
+          <th style="width:25%">
+            <p-dropdown appendTo="body" [options]="typeFilterInputOptions" 
+            [(ngModel)]="typeFilterInput" optionLabel="name"
+            optionValue="code" (onChange)="applyTypeFilter(typeFilterInput)">
+          </p-dropdown>
+          </th>
+          <th></th>
+          <th style="width:40%">
+            <p-dialog header="Select Date Range" [(visible)]="displayCalendar" 
+              [style]="{'width': '20vw'}" [baseZIndex]="10000">
+              <label for="startDate" class="mr-2">From:</label>
+              <input pInputText id= "startDate" class="mb-4 p-inputtext-sm" 
+                [(ngModel)]="startDateFilterInput" type="datetime-local" style="width: 70%;">
+              <br/>
+              <label for="FromDate" class="mr-4">To:</label>
+              <input pInputText id= "FromDate" class="mb-4 p-inputtext-sm" 
+              [(ngModel)]="endDateFilterInput" type="datetime-local" style="width: 70%;">
+              <br/>
+              <button pButton type="submit" label="Apply" (click) = "applyDateFilter()"
+                class="p-button-sm p-button-raised p-button-primary">
+              </button>
+            </p-dialog>
+            <button *ngIf="!dateRange" pButton type="button" label="Select date range"
+                (click) = "displayCalendar = true"
+                class="p-button-sm p-button-raised p-button-primary">
+            </button>
+            <button *ngIf="dateRange" pButton type="button" 
+                icon = "pi pi-times"
+                label = "{{startDateFilterInput}} To {{endDateFilterInput}}"
+                (click) = "removeDateFilter()"
+                class="p-button-sm p-button-raised p-button-primary">
+            </button>
+          </th>
+          <th style="width:30%">
+            <button pButton type="button" icon="pi pi-filter-slash" label="Clear filters"
+                (click) = "removeAllFilters()"
+                class="p-button-sm p-button-raised p-button-primary">
+            </button>
           </th>
         </tr>
       </ng-template>
@@ -40,21 +90,12 @@
           <td>
             {{i+1}}
           </td>
-          <td *ngIf="!user.updatable" style="width:20%">
+          <td style="width:20%">
             <img src={{user.profilePictureUrl}} style="height:inherit; width:8%;" />
             {{user.name}}
           </td>
-          <td *ngIf="user.updatable" style="width:20%">
-            <input pInputText id="userName" class="p-inputtext-sm" [(ngModel)]="user.name"
-                   placeholder="user name"/>
-          </td>
-          <td *ngIf="!user.updatable" style="width:20%">
+          <td style="width:20%">
             {{user.gender | titlecase}}
-          </td>
-          <td *ngIf="user.updatable" style="width:20%">
-            <p-dropdown appendTo="body" [options]="genders" [(ngModel)]="user.gender" optionLabel="name"
-                        optionValue="code">
-            </p-dropdown>
           </td>
           <td *ngIf="!user.updatable" style="width:20%">
             {{user.role | titlecase}}
@@ -67,7 +108,7 @@
           <td>
             {{user.status}}
           </td>
-          <td style="width:20%">{{user.displayTime}}</td>
+          <td style="width:40%">{{user.displayTime}}</td>
           <td *ngIf="!user.updatable" style="width:15%">
             <i class="fa fa-info-circle m-3 text-blue" (click)="userDetails(user.id)"></i>
             <i class="fas fa-edit m-3 text-info" aria-hidden="true" (click)="editUser(user.id)"></i>

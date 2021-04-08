@@ -10,11 +10,20 @@ import { BaseService } from './base.service';
 export class SudoService extends BaseService {
 
     // users
-    public getUsers(skip?: number, take?: number): Observable<any> {
-        if(isNaN(skip) || isNaN(take)){
-            return this.http.get(this.API_URL + `/users/`, this.getHttpOptions());
+    public getUsers(skip?: number, take?: number, where?: string, dateRange?: {start: string, end: string})
+        : Observable<any> {
+        var uri = `/users?`;
+        if(!isNaN(skip) && !isNaN(take)){
+            uri += `skip=${skip}&take=${take}&`; 
         }
-        return this.http.get(this.API_URL + `/users?skip=${skip}&take=${take}`, this.getHttpOptions());
+        if(where) {
+            uri += `where=${where}&`;
+        }
+        if(dateRange) {
+            uri += `startDate=${dateRange.start}&endDate=${dateRange.end}`;
+        }
+        uri = uri.trim();
+        return this.http.get(this.API_URL + uri, this.getHttpOptions());
     }
 
     public updateUser(userId: number, updateUserObject: UpdateUserDTO): Observable<any> {
@@ -39,11 +48,25 @@ export class SudoService extends BaseService {
 
     //teams
 
-    public getAllAvailableTeams(skip: number, take: number): Observable<object> {
-        if(isNaN(skip) || isNaN(take)) {
-            return this.http.get(this.API_URL + `/groups/`, this.getHttpOptions());
+    public getAllAvailableTeams(skip?: number, take?: number, where?: string,
+         dateRange?: {start: string, end: string}): Observable<object> {
+        var uri = `/groups?`;
+        if(!isNaN(skip) && !isNaN(take)){
+            uri += `skip=${skip}&take=${take}&`; 
         }
-        return this.http.get(this.API_URL + `/groups?skip=${skip}&take=${take}`, this.getHttpOptions());
+        if(where) {
+            uri += `where=${where}&`;
+        }
+        if(dateRange) {
+            uri += `startDate=${dateRange.start}&endDate=${dateRange.end}`;
+        }
+        uri = uri.trim();
+        return this.http.get(this.API_URL + uri, this.getHttpOptions());
+    }
+
+    public getAllParentTeams(): Observable<object> {
+       var uri = `/groups/parents`;
+       return this.http.get(this.API_URL + uri, this.getHttpOptions());
     }
 
     private getHttpOptions(): { headers: HttpHeaders } {

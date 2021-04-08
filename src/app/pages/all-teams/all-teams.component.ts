@@ -18,19 +18,34 @@ import { TeamService } from '../../services/team.service';
 })
 export class AllTeamsComponent implements OnInit {
 
-  teams: GroupDTO[];
-  error: string;
-  userRoles: DropdownDTO[];
-  genders: DropdownDTO[];
-  parentTeamOptions: DropdownDTO[];
-  selectedParent: DropdownDTO = {name: "None", code: null};
-  createTeamName: string;
-  displayError: boolean = false;
+  /* component specific variables */
+  private teams: GroupDTO[];
+  private userRoles: DropdownDTO[];
+  private genders: DropdownDTO[];
+  private parentTeamOptions: DropdownDTO[];
+  private selectedParent: DropdownDTO = {name: "None", code: null};
+  private createTeamName: string;
+  private error: string;
+  private displayError: boolean = false;
+
+  /* pagination variables */
   private skip: number;
   private take: number;
   private totalRecords: number;
   private numberOfRowsPerPageOptions: {rows: number}[] = ROWS_PER_PAGE_OPTIONS;
-  private numberOfRowsPerPage: number = 5;
+  private numberOfRowsPerPage: number = 10;
+
+  /* filtering variables */
+  private where: string = null;
+  private whereName: string = null;
+  private whereParent: string = null;
+  private nameFilterInput: string;
+  private parentTeamFilterOptions: DropdownDTO[];
+  private selectedParentFilter: string = 'All'
+  private displayCalendar: boolean = false;
+  private startDateFilterInput: string = null;
+  private endDateFilterInput: string = DateFormatting.dateStringToUTC(new Date());
+  private dateRange: {start: string, end: string} = null;
 
   constructor(
     private readonly authenticationService: AuthenticationService,
@@ -41,7 +56,8 @@ export class AllTeamsComponent implements OnInit {
 
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.getAllParents();
     //this.getAllTeams();
   }
 
@@ -67,7 +83,8 @@ export class AllTeamsComponent implements OnInit {
   }
 
   private getAllTeams(): void {
-    this.sudoService.getAllAvailableTeams(this.skip, this.take).subscribe((teamInformationData: {groups: any[], length: number}) => {
+    this.sudoService.getAllAvailableTeams(this.skip, this.take, this.where, this.dateRange)
+    .subscribe((teamInformationData: {groups: any[], length: number}) => {
       this.teams = [];
       this.parentTeamOptions = [{name: "None", code: null}];
       const teamInformation = teamInformationData.groups;
@@ -89,6 +106,16 @@ export class AllTeamsComponent implements OnInit {
       }
       this.teams = this.sortTeams(this.teams);
     })
+  }
+
+  private async getAllParents(): Promise<void> {
+    const ParentInformationData: any = await this.sudoService.getAllParentTeams().toPromise();
+    this.parentTeamFilterOptions = [{name: "All", code: null}];
+    if(ParentInformationData && ParentInformationData.length > 0){
+      ParentInformationData.forEach(parent => {
+        this.parentTeamFilterOptions.push({name: parent.name, code: parent.id});
+      })
+    }
   }
 
   private teamDetails(teamId: number): void {
@@ -134,8 +161,67 @@ export class AllTeamsComponent implements OnInit {
 
   private loadTeams(tableElement) {
     this.skip = tableElement._first;
-    this.take = this.numberOfRowsPerPage;
+    this.take = tableElement._rows;
     this.getAllTeams();
+  }
+
+  private applyNameFilter() {
+    if(this.nameFilterInput && this.nameFilterInput.length>0) {
+      this.whereName = `name:contains ${this.nameFilterInput}`;
+    }
+    else {
+      this.whereName = null;
+    }
+    this.getWhereQuery();
+    this.getAllTeams();
+  }
+
+  private applyParentFilter() {
+    if(this.selectedParentFilter){
+      this.whereParent = `parentId: int(+${this.selectedParentFilter})`
+    }
+    else{
+      this.whereParent = null;
+    }
+    this.getWhereQuery();
+    this.getAllTeams();
+  }
+
+  private applyDateFilter() {
+    if(this.startDateFilterInput && this.endDateFilterInput) {
+      this.displayCalendar = false;
+      this.dateRange = {
+        start : this.startDateFilterInput + ':00.000Z',
+        end : this.endDateFilterInput + ':00.000Z',
+      }
+    }
+    else {
+      this.dateRange = null;
+    }
+    this.getAllTeams();
+  }
+
+  private removeDateFilter() {
+    this.startDateFilterInput = null;
+    this.endDateFilterInput = DateFormatting.dateStringToUTC(new Date());
+    this.displayCalendar = false;
+    this.dateRange = null;
+    this.getAllTeams();
+  }
+
+  private removeAllFilters() {
+    this.nameFilterInput = null;
+    this.selectedParentFilter = 'All';
+    this.whereName = null;
+    this.whereParent = null;
+    this.where = null;
+    this.removeDateFilter();
+    this.getAllTeams();
+  }
+
+  private getWhereQuery(){
+    this.where = 
+      (this.whereName ? this.whereName + ',': '') + (this.whereParent ? this.whereParent: '');
   }
 }
 

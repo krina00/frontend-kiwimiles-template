@@ -29,6 +29,7 @@ import { AllTeamsComponent } from '../../pages/all-teams/all-teams.component';
 import { TeamRolesComponent } from 'src/app/pages/team-roles/team-roles.component';
 import { RoleDetailsComponent } from 'src/app/pages/role-details/role-details.component';
 import { AllRolesComponent } from 'src/app/pages/all-roles/all-roles.component';
+import { CalendarModule } from 'primeng/calendar';
 
 @NgModule({
   imports: [
@@ -48,7 +49,8 @@ import { AllRolesComponent } from 'src/app/pages/all-roles/all-roles.component';
     DropdownModule,
     TableModule,
     BadgeModule,
-    TooltipModule
+    TooltipModule,
+    CalendarModule
   ],
   declarations: [
     DashboardComponent,

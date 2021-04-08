@@ -132,4 +132,23 @@ export class DateFormatting{
         dateString = date + '  ' + time + '  UTC'
         return dateString;
       }
+
+    /**
+     * 
+     * @param date 
+     * @returns UTC date
+     */
+     public static dateStringToUTC(dateTime: Date): string {
+        var dateString: string;
+        const localDate: Date = dateTime;
+        var dd: string = (localDate.getDate() + 1).toString();
+        if (dd.length == 1) dd = ('0' + dd);
+        var mm: string = (localDate.getMonth() + 1).toString();
+        if (mm.length == 1) mm = ('0' + mm);
+        var yyyy: string = (localDate.getFullYear()).toString();
+        var time: string = localDate.toLocaleTimeString(undefined,{hour12: false});
+        time = time.slice(0, time.length - 3);
+        dateString = `${yyyy}-${mm}-${dd}T${time}`
+        return dateString;
+      }
 }
