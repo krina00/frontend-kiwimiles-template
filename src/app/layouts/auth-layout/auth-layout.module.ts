@@ -28,7 +28,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { VerifyEmailComponent } from 'src/app/pages/verify-email/verify-email.component';
 import { SessionTimeoutComponent } from 'src/app/pages/session-timeout/session-timeout.component';
 import {  RecaptchaModule, RECAPTCHA_SETTINGS, RecaptchaSettings, RecaptchaFormsModule  } from 'ng-recaptcha';
-import { environment } from '../../../environments/environment'
+import { environment } from '../../../environment/environment'
 
 @NgModule({
   imports: [

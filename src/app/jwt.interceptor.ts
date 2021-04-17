@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor,
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable, throwError} from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from '../environment/environment';
 import { AuthenticationService } from '../../src/app/services/authentication.service'
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';

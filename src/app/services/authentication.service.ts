@@ -4,7 +4,7 @@ import { from, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { User } from '../user';
 import { BaseService } from './base.service';
-import { environment } from "../../environments/environment";
+import { environment } from "../../environment/environment";
 
 @Injectable({
   providedIn: 'root'
