@@ -1,9 +1,9 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-import { JwtHelperService, JwtModule, JwtModuleOptions } from '@auth0/angular-jwt';
+import { JwtHelperService, JwtInterceptor, JwtModule, JwtModuleOptions } from '@auth0/angular-jwt';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -13,6 +13,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
+import { myJwtInterceptor } from './jwt.interceptor';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 
@@ -47,6 +48,11 @@ const JWT_Module_Options: JwtModuleOptions = {
     AuthLayoutComponent
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: myJwtInterceptor,
+      multi: true
+    },
     JwtHelperService,
     JwtModule,
   ],

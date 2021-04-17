@@ -16,7 +16,6 @@ export class BackupCodeComponent implements OnInit {
 
   ngOnInit() {
     this.backupCodes = this.config.data.backupCodes;
-    console.log(this.backupCodes);
   }
   copyCodes(){
     const copyCodes: string = this.backupCodes.toString();

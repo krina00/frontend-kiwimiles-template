@@ -4,12 +4,18 @@ import { Observable } from 'rxjs';
 import { UserDTO } from '../dto/user.dto';
 import { BaseService } from './base.service';
 import { PermissionService } from './permission.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService extends BaseService {
    
+  // constructor(
+  //   public http: HttpClient,
+  //   private jwtHelper: JwtHelperService) {
+  //   super(http);
+  // }
   public getUserProfile(): Observable<any> {
     
     return this.http.get(this.API_URL + "/users/userId", this.getHttpOptions());
@@ -40,9 +46,6 @@ export class UserService extends BaseService {
   private getHttpOptions(): { headers: HttpHeaders } {
 
     const token: string = localStorage.getItem('token');
-    if (!token) {
-      history.go(0);
-    }
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
         .set('authorization', 'Bearer ' + token)

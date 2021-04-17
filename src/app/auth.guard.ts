@@ -13,15 +13,14 @@ export class AuthGuard implements CanActivate {
     private jwtHelper: JwtHelperService) { }
 
   async canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (localStorage.getItem('token') && !this.jwtHelper.isTokenExpired(localStorage.getItem('token'))) {
+    if ((localStorage.getItem('token') != 'undefined') && !this.jwtHelper.isTokenExpired(localStorage.getItem('token'))) {
       return true;
     }
-    else if (localStorage.getItem('token') && this.jwtHelper.isTokenExpired(localStorage.getItem('token'))) {
+    else if ((localStorage.getItem('token') != 'undefined') && this.jwtHelper.isTokenExpired(localStorage.getItem('token'))) {
 
       try {
         const data: any = await this.authenticationService.refreshAccessToken().toPromise();
         if (data != 'session timed out!') {
-          localStorage.setItem('token', data.access_token);
           return true;
         }
         else {
@@ -31,9 +30,8 @@ export class AuthGuard implements CanActivate {
         }
       }
       catch (error) {
-        console.log(error);
         this.authenticationService.logout().subscribe();
-        this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+        this.router.navigate(['/session-timeout']);
         return false;
       }
       
@@ -41,7 +39,6 @@ export class AuthGuard implements CanActivate {
     // not logged in so redirect to login page with the return url
     else
     {
-      console.log("token expired");
       this.authenticationService.logout().subscribe();
       this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
       return false;

@@ -66,7 +66,6 @@ export class UsersComponent implements OnInit {
       gender: user.gender
     }
     this.sudoService.updateUser(user.id, updateUserObject).subscribe((userDetails) => {
-      console.log(userDetails);
       this.getAllUsers();
     },
     error => {
@@ -114,7 +113,6 @@ export class UsersComponent implements OnInit {
 
   private deleteUser(userId: number): void {
     this.sudoService.deleteUser(userId).subscribe((user) => {
-      console.log(user);
       this.getAllUsers();
     },
     error => {

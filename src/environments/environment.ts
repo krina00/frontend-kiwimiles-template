@@ -5,7 +5,9 @@
 export const environment = {
   production: false,
   API_URL: "http://localhost:8080/v1",
-  JWT_SECRET: "kiwimiles"
+  JWT_SECRET: "kiwimiles",
+  CLIENT_SIDE_SITE_KEY: "6LfjcKIaAAAAANClggBteeK74EIOHhYSaVJ4rKXl",
+  SERVER_SIDE_CAPTCHA_SECRET: "6LfjcKIaAAAAACwtLM28mr2pKRhRnaC_1904urLw"
 };
 
 /*

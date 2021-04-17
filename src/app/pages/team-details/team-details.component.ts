@@ -112,7 +112,6 @@ export class TeamDetailsComponent implements OnInit {
   getAllMembers(): void {
 
     this.teamService.getAllMembers(this.teamId).subscribe((membersInformation: any[]) => {
-      console.log(membersInformation);
       if (membersInformation && membersInformation.length > 0) {
         this.members = [];
         this.memberIds = [];
@@ -159,7 +158,6 @@ export class TeamDetailsComponent implements OnInit {
   updateMember(memberId: number): void {
     const index: number = this.members.findIndex(member => member.id == memberId);
     this.teamService.updateMember(this.teamId, memberId, this.members[index].role).subscribe((memberDetails) => {
-      console.log(memberDetails);
       this.getAllMembers();
     },
     err => { 

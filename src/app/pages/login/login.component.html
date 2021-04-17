@@ -49,7 +49,9 @@
           </div>
           <p-checkbox name="remember" value="true" [binary]="true" [(ngModel)] ="passwordless"></p-checkbox>
           <span class="text-muted mx-2">passwordless login</span>
-
+          <!-- <form #declarativeForm="ngForm" class='my-4'>
+            <re-captcha [(ngModel)]="declarativeFormCaptchaValue" name="captcha" required></re-captcha>
+          </form> -->
           <div class="text-center">
             <button type="submit" class="btn btn-primary mt-5" (click)="login()">Sign in</button>
           </div>

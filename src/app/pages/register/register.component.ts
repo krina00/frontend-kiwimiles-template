@@ -62,8 +62,6 @@ export class RegisterComponent implements OnInit {
     this.submitted = true;
 
     if (this.registrationForm.invalid) {
-      console.log(this.registrationForm);
-      console.log('invalid data');
       return;
     }
     this.user = {

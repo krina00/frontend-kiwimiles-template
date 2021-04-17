@@ -53,7 +53,6 @@ export class TeamsComponent implements OnInit {
     }
     this.error = null;
     this.teamService.createTeam(this.createTeamName).subscribe((teamDetails) => {
-      console.log(teamDetails);
       this.getAllMemberships();
     },
     error =>{
@@ -61,7 +60,6 @@ export class TeamsComponent implements OnInit {
       this.error = "Could not add team"
     });
     this.authenticationService.refreshAccessToken().subscribe((data) => {
-      console.log(data);
       history.go(0);
     });
   }
@@ -74,7 +72,6 @@ export class TeamsComponent implements OnInit {
   private updateTeam(teamId: number): void {
     const index: number = this.memberships.findIndex(membership => membership.group.id == teamId);
     this.teamService.updateTeam(teamId, this.memberships[index].group.name).subscribe((teamDetails) => {
-      console.log(teamDetails);
       this.getAllMemberships();
     },
     error =>{
@@ -92,7 +89,6 @@ export class TeamsComponent implements OnInit {
   private getAllMemberships(): void {
     if(this.hasReadPermission) {
       this.teamService.getAllMemberships().subscribe((membershipInformation: any[]) => {
-        console.log(membershipInformation);
         this.memberships = [];
         if (membershipInformation && membershipInformation.length > 0) {
           membershipInformation.forEach((membership) => {
@@ -108,13 +104,11 @@ export class TeamsComponent implements OnInit {
             this.memberships.push(membershipObject);
           })
         }
-        console.log(this.memberships);
       })
     }
   }
 
   private teamDetails(teamId: number, role: string): void {
-    console.log(teamId);
     this.router.navigate([`/admin/teams/${role}/${teamId}`]);
   }
 

@@ -58,7 +58,6 @@ export class UserProfileComponent implements OnInit {
 
   private async getUserProfile() {
     const userDetails = await this.userService.getUserProfile().toPromise();
-    console.log(userDetails);
     if (!userDetails) {
       console.log('user details not found!');
     }

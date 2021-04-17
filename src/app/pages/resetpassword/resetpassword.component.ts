@@ -44,7 +44,6 @@ export class ResetPasswordComponent implements OnInit {
             this.authenticationService.resetPassword(this.resetPasswordForm.value.newPassword, this.tokenRetrived)
             .subscribe(
                 () => { 
-                    console.log('after reset')
                     this.router.navigate(['/password-reset-window']);
                  },
                 error => {

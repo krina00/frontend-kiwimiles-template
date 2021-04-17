@@ -1,5 +1,6 @@
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
 import { UpdateUserDTO, UserDTO } from '../dto/user.dto';
 import { BaseService } from './base.service';
@@ -9,6 +10,11 @@ import { BaseService } from './base.service';
 })
 export class SudoService extends BaseService {
 
+    // constructor(
+    //     public http: HttpClient,
+    //     private jwtHelper: JwtHelperService) {
+    //     super(http);
+    //   }
     // users
     public getUsers(skip?: number, take?: number, where?: string, dateRange?: {start: string, end: string})
         : Observable<any> {
@@ -72,9 +78,6 @@ export class SudoService extends BaseService {
     private getHttpOptions(): { headers: HttpHeaders } {
         
         const token: string = localStorage.getItem('token');
-        if (!token) {
-            history.go(0);
-        }
         const httpOptions = {
             headers: new HttpHeaders({ 'Content-Type': 'application/json' })
                 .set('authorization', 'Bearer ' + token)

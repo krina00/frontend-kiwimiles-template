@@ -56,7 +56,6 @@ export class MultiFactorLoginComponent implements OnInit, OnDestroy {
       this.authenticationService.login({ email: this.email, password: this.password, code: this.otpCode } as User)
         .subscribe(
           data => {
-            console.log(data);
             if (data.accessToken) {
               this.error = '';
               this.router.navigate(['admin/dashboard']);

@@ -26,6 +26,9 @@ import { RegistrationConfirmationPopupComponent } from 'src/app/pages/registrati
 import { LoginOAuthComponent } from 'src/app/pages/login-oauth/login-oauth.component';
 import { TooltipModule } from 'primeng/tooltip';
 import { VerifyEmailComponent } from 'src/app/pages/verify-email/verify-email.component';
+import { SessionTimeoutComponent } from 'src/app/pages/session-timeout/session-timeout.component';
+import {  RecaptchaModule, RECAPTCHA_SETTINGS, RecaptchaSettings, RecaptchaFormsModule  } from 'ng-recaptcha';
+import { environment } from '../../../environments/environment'
 
 @NgModule({
   imports: [
@@ -39,7 +42,9 @@ import { VerifyEmailComponent } from 'src/app/pages/verify-email/verify-email.co
     DynamicDialogModule,
     CheckboxModule,
     DropdownModule,
-    TooltipModule
+    TooltipModule,
+    RecaptchaModule,
+    RecaptchaFormsModule,
   ],
   declarations: [
     LoginComponent,
@@ -57,7 +62,16 @@ import { VerifyEmailComponent } from 'src/app/pages/verify-email/verify-email.co
     EmailOTPDialogComponent,
     PasswordResetPopupComponent,
     RegistrationConfirmationPopupComponent,
-    VerifyEmailComponent
+    VerifyEmailComponent,
+    SessionTimeoutComponent
+  ],
+  providers:[
+    {
+      provide: RECAPTCHA_SETTINGS,
+      useValue: {
+        siteKey: environment.CLIENT_SIDE_SITE_KEY,
+      } as RecaptchaSettings,
+    }
   ],
   exports: [
     ChangePasswordComponent

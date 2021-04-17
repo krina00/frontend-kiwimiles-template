@@ -39,7 +39,6 @@ export class AllRolesComponent implements OnInit {
     this.roles = [];
     const roleInformation = roleData.roles;
     this.totalRecords = roleData.length;
-    console.log(roleInformation)
     if (roleInformation && roleInformation.length > 0) {
       roleInformation.forEach((role) => {
         const roleObject: RoleDTO = { 

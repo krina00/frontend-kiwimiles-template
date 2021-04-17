@@ -5,6 +5,7 @@ import { User } from '../../user';
 import { ERR_UNAUTHORIZED, ERR_BAD_REQUEST, ERR_TOO_MANY_REQUESTS } from '../../errors/error.constants'
 import { throwError } from 'rxjs';
 import { WELCOME_TITLE } from 'src/app/static-values';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +20,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   error: string;
   passwordless: boolean = false;
   tokenParameter: string;
+  //declarativeFormCaptchaValue
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -30,9 +32,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-
-
-  ngOnInit() {
+  ngOnInit(): void {
     if (localStorage.getItem('token')) {
       this.router.navigate(['admin/dashboard']);
     }
@@ -63,6 +63,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       );
     }
   }
+
   ngOnDestroy() {
   }
 
@@ -75,20 +76,22 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  loginWithGoogle(){
+  loginWithGoogle(): void {
     this.authenticationService.loginWithGoogle()
      .subscribe(response => {
       location.href = response.url;
+      localStorage.setItem('refreshTrial', '1');
      },
      error => {
         throwError(error);
      });
   }
 
-  loginWithFacebook(){
+  loginWithFacebook(): void {
     this.authenticationService.loginWithFacebook()
     .subscribe(response => {
       location.href = response.url;
+      localStorage.setItem('refreshTrial', '1');
     },
     error => {
       throwError(error);
@@ -135,41 +138,54 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.error = "Password field is required"
       return;
     }
-    this.authenticationService.login({ email: this.email, password: this.password } as User)
-      .subscribe(
-        data => {
-          if (data.accessToken) {
-            this.router.navigate(['admin/dashboard']);
-          }
-          else if (data.multiFactorRequired) {
-            if (data.method == 'TOTP' || data.method == 'SMS') {
-              this.router.navigate(['/otp'], { state: { data: { email: this.email, password: this.password } } });
+    // if(!this.declarativeFormCaptchaValue) {
+    //   this.error = "Captcha is required"
+    //   return;
+    // }
+    // else {
+      //if (this.handleCaptcha()) {
+        this.authenticationService.login({ email: this.email, password: this.password } as User)
+        .subscribe(
+          data => {
+            if (data.accessToken) {
+              this.router.navigate(['admin/dashboard']);
             }
-            else if (data.method == 'EMAIL') {
-              this.router.navigate(['/email-notification']);
+            else if (data.multiFactorRequired) {
+              if (data.method == 'TOTP' || data.method == 'SMS') {
+                this.router.navigate(['/otp'], { state: { data: { email: this.email, password: this.password } } });
+              }
+              else if (data.method == 'EMAIL') {
+                this.router.navigate(['/email-notification']);
+              }
+              else {
+                console.error(`Invalid method - ${data.method} received!`);
+              }
+            }
+          },
+          error => {
+            if (error.status == 401) {
+              this.error = ERR_UNAUTHORIZED;
+            }
+            else if (error.status == 400) {
+              this.error = ERR_BAD_REQUEST;
+            }
+            else if (error.status == 429) {
+              this.error = ERR_TOO_MANY_REQUESTS;
+            }
+            else if (error.status == 404) {
+              this.error = "Invalid credentials";
             }
             else {
-              console.error(`Invalid method - ${data.method} received!`);
+              this.error = "Login Error";
             }
-          }
-        },
-        error => {
-          if (error.status == 401) {
-            this.error = ERR_UNAUTHORIZED;
-          }
-          else if (error.status == 400) {
-            this.error = ERR_BAD_REQUEST;
-          }
-          else if (error.status == 429) {
-            this.error = ERR_TOO_MANY_REQUESTS;
-          }
-          else if (error.status == 404) {
-            this.error = "Invalid credentials";
-          }
-          else {
-            this.error = "Login Error";
-          }
-        },
-      );
+          },
+        );
+    //   }
+    // }
   }
+
+  // private handleCaptcha(): boolean {
+  //   this.authenticationService.captchaResponse(this.declarativeFormCaptchaValue);
+  //   return true;
+  // }
 }
