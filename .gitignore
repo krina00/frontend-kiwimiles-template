@@ -43,3 +43,5 @@ Thumbs.db
 .vs/VSWorkspaceState.json
 src/environment/environment.prod.ts
 src/environment/environment.ts
+src/environment/environment/environment.prod.ts
+src/environment/environment/environment.ts
