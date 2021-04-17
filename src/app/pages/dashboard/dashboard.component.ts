@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Chart from 'chart.js';
+import { PermissionService } from 'src/app/services/permission.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../user';
 // core components
@@ -18,7 +19,8 @@ import {
 export class DashboardComponent implements OnInit {
 
   constructor(
-    private userService: UserService,
+    private readonly userService: UserService,
+    private readonly permissionService: PermissionService
   ) { }
 
   public datasets: any;
@@ -29,9 +31,8 @@ export class DashboardComponent implements OnInit {
   private user: User;
 
   ngOnInit() {
-    this.userService.getUserProfile().subscribe(userDetails => {
-    });
-
+    // this.userService.getUserProfile().subscribe(userDetails => {
+    // });
     this.datasets = [
       [0, 20, 10, 30, 15, 40, 20, 60, 60],
       [0, 20, 5, 25, 10, 30, 15, 40, 40]

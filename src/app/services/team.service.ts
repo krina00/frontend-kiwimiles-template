@@ -1,5 +1,6 @@
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
 import { BaseService } from './base.service';
 
@@ -8,6 +9,11 @@ import { BaseService } from './base.service';
 })
 export class TeamService extends BaseService {
 
+  // constructor(
+  //   public http: HttpClient,
+  //   private jwtHelper: JwtHelperService) {
+  //   super(http);
+  // }
 
   //teams
   public getAllMemberships(): Observable<object> {
@@ -15,11 +21,12 @@ export class TeamService extends BaseService {
     return this.http.get(this.API_URL + `/users/userId/memberships`, this.getHttpOptions());
   }
 
-  public createTeam(teamName: string): Observable<object> {
+  public createTeam(teamName: string, parentTeamId?: number): Observable<object> {
 
     return this.http.post(this.API_URL + `/users/userId/memberships`,
       {
         name: teamName,
+        parentTeamId: parentTeamId,
         autoJoinDomain: true,
         forceTwoFactor: true
       }, this.getHttpOptions());
@@ -65,9 +72,6 @@ export class TeamService extends BaseService {
 
   private getHttpOptions(): { headers: HttpHeaders } {
     const token: string = localStorage.getItem('token');
-    if (!token) {
-      history.go(0);
-    }
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
         .set('authorization', 'Bearer ' + token)

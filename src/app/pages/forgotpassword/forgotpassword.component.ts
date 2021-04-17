@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ERR_USER_NOT_FOUND } from 'src/app/errors/error.constants';
 import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
@@ -28,16 +29,22 @@ export class ForgotpasswordComponent implements OnInit {
   }
   async onSubmit() {
     this.submitted = true;
+    this.active = false;
     if (!this.Userform.invalid) {
       await this.authenticationService.forgotpassword(this.Userform.value.email).toPromise()
       .catch(error => {
-        this.error = error;
-        console.log(error.message);
+        if (error.status == 404) {
+          this.error = ERR_USER_NOT_FOUND;
+        }
+        else {
+          this.error = "Could not send mail";
+        }
+        this.active = true;
       });
-      this.active = false;
+      
     }
     else {
-      console.error('Invalid data!');
+      this.active = true;
     }
 
   }

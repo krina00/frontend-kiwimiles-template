@@ -1,16 +1,22 @@
-<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-size: cover; background-position: center top;">
+<div class="header d-flex align-items-center" style="min-height: 600px; background-size: cover; background-position: center top;">
   <!-- Mask -->
   <span class="mask bg-gradient-danger opacity-8"></span>
   <!-- Header container -->
-  <div class="container-fluid text-center align-items-center">
+  <div class="container text-center">
     <div class="row justify-content-center">
       <div class="col-lg-7 col-md-10">
-        <h1 *ngIf="user" class="display-2 text-white">{{user.name}}</h1>
+        <span class="avatar avatar-lg rounded-circle">
+          <img *ngIf = "user" src = {{user.profilePictureUrl}}/>
+        </span>
+        <div *ngIf="user" class="display-2 text-white">
+          <span style="font-size:70%;font-weight: 500;">{{user.name}}</span>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<div class="container-fluid mt--7">
+
+<div class="mt--9 pb-6 pl-6" style="width: 72%;margin: auto;">
   <div class="row">
     <div class="col-md-11 order-md-2">
       <div class="card bg-secondary shadow">
@@ -19,13 +25,9 @@
             <div class="col-8">
               <h3 class="mb-0">User Details</h3>
             </div>
-            <!--<div class="col-4 text-right">
-              <a href="#!" class="btn btn-sm btn-primary">Settings</a>
-            </div>-->
           </div>
         </div>
-        <div *ngIf="user" class="card-body">
-
+        <div *ngIf="user" class="card-body justify-content-center">
           <h6 class="heading-small text-muted mb-4">User information</h6>
           <div class="pl-lg-4">
             <div class="row">
@@ -93,16 +95,16 @@
           <hr class="my-4" />
           <!-- Description -->
           <h6 class="heading-small text-muted mb-4">Permissions</h6>
-          <div class="pl-lg-4">
+          <div class="px-5">
             <div class="form-group">
               <label class="mr-2" for="pwless">Passwordless login</label>
-              <input id="pwless" type="checkbox" class="mr-8" [(ngModel)]="user.ispasswordLess" style="width:14px;height:inherit" />
+              <input id="pwless" type="checkbox" class="mr-5" [(ngModel)]="user.ispasswordLess" style="width:14px;height:inherit" />
               <label class="mr-2" for="mfa">Multi factor login</label>
-              <input id="mfa" type="checkbox" class="mr-8" [(ngModel)]="user.isMFA" style="width:14px;height:inherit" />
+              <input id="mfa" type="checkbox" class="mr-5" [(ngModel)]="user.isMFA" style="width:14px;height:inherit" />
               <label class="mr-2" for="loc">Check location on login</label>
-              <input id="loc" type="checkbox" class="mr-8" [(ngModel)]="user.isDetectLocationOnLogin" style="width:14px;height:inherit" />
+              <input id="loc" type="checkbox" class="mr-5" [(ngModel)]="user.isDetectLocationOnLogin" style="width:14px;height:inherit" />
               <label class="mr-2" for="ntf">Notifications</label>
-              <input id="ntf" type="checkbox" class="mr-8" [(ngModel)]="user.isNotifications" style="width:14px;height:inherit" />
+              <input id="ntf" type="checkbox" class="mr-5" [(ngModel)]="user.isNotifications" style="width:14px;height:inherit" />
             </div>
           </div>
           <div class="text-center">

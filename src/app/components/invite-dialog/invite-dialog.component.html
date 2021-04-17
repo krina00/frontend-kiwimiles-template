@@ -12,6 +12,7 @@
         <label for="email" class="mr-3 font-weight-bold">Email<sup>*</sup>: </label>
         <input pInputText id="email" class="p-inputtext mb-4" [(ngModel)]="createMember.email"
                placeholder="Email i.e. xyz@abc.com" />
+        <h4 *ngIf="validationError" class="text-center mt--4" style="color:red" >{{validationError}}</h4>
       </div>
       <div>
         <label class="mr-3 font-weight-bold">Role: </label>

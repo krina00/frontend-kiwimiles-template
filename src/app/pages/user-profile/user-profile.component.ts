@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PermissionService } from 'src/app/services/permission.service';
 import { UserDTO } from '../../dto/user.dto';
 import { UserService } from '../../services';
 
@@ -16,6 +17,11 @@ export class UserProfileComponent implements OnInit {
 
   user: UserDTO;
   editable: boolean = false;
+  hasEmailReadPermission: boolean = false;
+  hasProfileWritePermission: boolean = false;
+  hasEmailWritePermission: boolean = false;
+  displayError: boolean = false;
+  error: string;
   genders: GenderDTO[] = [
     { label: 'Male', type: 'MALE' },
     { label: 'Female', type: 'FEMALE' },
@@ -24,27 +30,34 @@ export class UserProfileComponent implements OnInit {
   ];
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private permissionService: PermissionService
   ) { }
 
   async ngOnInit() {
+    this.checkPermissions();
     await this.getUserProfile();
     await this.getUserEmailId();
   }
 
   private async getUserEmailId() {
-    const emailData: { email: string }[] = await this.userService.getuserEmailId().toPromise();
-    if (emailData.length > 0) {
-      this.user.email = emailData[0].email;
+    if(this.permissionService.checkPermission("Read user email")) {
+      const emailData: { email: string }[] = await this.userService.getuserEmailId().toPromise();
+      if (emailData.length > 0) {
+        this.user.email = emailData[0].email;
+      }
+      else {
+          this.displayError = true;
+          this.error = "Could not find email"
+      }
     }
     else {
-      console.error('No emails found');
+
     }
   }
 
   private async getUserProfile() {
     const userDetails = await this.userService.getUserProfile().toPromise();
-    console.log(userDetails);
     if (!userDetails) {
       console.log('user details not found!');
     }
@@ -52,6 +65,7 @@ export class UserProfileComponent implements OnInit {
       this.user = {
         name: userDetails.name,
         email: null,
+        profilePictureUrl: userDetails.profilePictureUrl,
         role: userDetails.role,
         gender: userDetails.gender,
         mfaMethod: userDetails.twoFactorMethod,
@@ -77,8 +91,14 @@ export class UserProfileComponent implements OnInit {
         this.editable = false;
       },
       error => {
-        console.error(error);
+        this.displayError = true;
+        this.error = "Could not update user"
       }
     )
+  }
+
+  private checkPermissions(){
+    this.hasEmailReadPermission = this.permissionService.checkPermission("Read user email");
+    this.hasProfileWritePermission = this.permissionService.checkPermission("Write user details");
   }
 }

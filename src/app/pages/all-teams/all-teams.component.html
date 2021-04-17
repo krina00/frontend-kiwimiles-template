@@ -13,18 +13,74 @@
 <div class="container mt--8 pb-5">
   <div class="row justify-content-center">
 
-    <p-table *ngIf="teams" [resizableColumns]="true" [value]="teams" styleClass="p-datatable-striped">
+    <p-table *ngIf="!teams || teams.length == 0" styleClass="p-datatable-striped">
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="text-center">No Teams Present at this moment</th>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-table #teamsdt [resizableColumns]="true" [value]="teams" styleClass="p-datatable-striped"
+        [lazy]="true" (onLazyLoad)="loadTeams(teamsdt)" [rowsPerPageOptions]="[5,10,25,50,100]"
+        [paginator]="true" [rows]="numberOfRowsPerPage" [totalRecords]="totalRecords">
       <ng-template pTemplate="header">
         <tr>
           <th style="width:10%">#</th>
           <th style="width:20%">Name</th>
-          <th style="width:20%">Created On</th>
-          <th style="width:15%"></th>
+          <th style="width:20%">Parent Team</th>
+          <th style="width:40%">Created On</th>
+          <th style="width:30%"></th>
+        </tr>
+        <tr>
+          <th style="width:10%">Filters</th>
+          <th style="width:20%">
+            <input pInputText style="width: 90%;" [(ngModel)]="nameFilterInput" 
+            (keyup.enter) = "applyNameFilter()" (blur) = "applyNameFilter()"
+            class="p-inputtext mx-2" placeholder="Filter by name" />
+          </th>
+          <th style="width:20%">
+            <p-dropdown appendTo="body" [options]="parentTeamFilterOptions"
+            (onChange) = "applyParentFilter()" [(ngModel)]="selectedParentFilter" 
+            optionLabel="name" optionValue="code">
+           </p-dropdown>
+          </th>
+          <th style="width:40%">
+            <p-dialog header="Select Date Range" [(visible)]="displayCalendar" 
+              [style]="{'width': '20vw'}" [baseZIndex]="10000">
+              <label for="startDate" class="mr-2">From:</label>
+              <input pInputText id= "startDate" class="mb-4 p-inputtext-sm" 
+                [(ngModel)]="startDateFilterInput" type="datetime-local" style="width: 70%;">
+              <br/>
+              <label for="FromDate" class="mr-4">To:</label>
+              <input pInputText id= "FromDate" class="mb-4 p-inputtext-sm" 
+              [(ngModel)]="endDateFilterInput" type="datetime-local" style="width: 70%;">
+              <br/>
+              <button pButton type="submit" label="Apply" (click) = "applyDateFilter()"
+                class="p-button-sm p-button-raised p-button-primary">
+              </button>
+            </p-dialog>
+            <button *ngIf="!dateRange" pButton type="button" label="Select date range"
+                (click) = "displayCalendar = true"
+                class="p-button-sm p-button-raised p-button-primary">
+            </button>
+            <button *ngIf="dateRange" pButton type="button" 
+                icon = "pi pi-times"
+                label = "{{startDateFilterInput}} To {{endDateFilterInput}}"
+                (click) = "removeDateFilter()"
+                class="p-button-sm p-button-raised p-button-primary">
+            </button>
+          </th>
+          <th style="width:30%">
+            <button pButton type="button" icon="pi pi-filter-slash" label="Clear filters"
+                (click) = "removeAllFilters()"
+                class="p-button-sm p-button-raised p-button-primary">
+            </button>
+          </th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" class="text-center" let-team let-i="rowIndex">
-        <tr>
+        <tr *ngIf="team.isDefault" style="background-color:#dcdfe3">
           <td style="width:10%">
             {{i+1}}
           </td>
@@ -36,18 +92,69 @@
             <input pInputText id="teamName" class="p-inputtext-sm" [(ngModel)]="team.name"
                    placeholder="team name" />
           </td>
-          <td style="width:20%">{{team.createdOn}}</td>
-          <td *ngIf="!team.updatable" style="width:15%">
-            <i class="fa fa-info-circle m-3 text-blue" (click)="teamDetails(team.id)"></i>
+          <td style="width:20%">
+            {{team.parentTeam}}
+          </td>
+          <td style="width:30%">{{team.displayTime}}</td>
+          <td *ngIf="!team.updatable && !team.isDefault" style="width:30%">
+            <i class="fa fa-user m-3 text-blue" (click)="teamDetails(team.id)"></i>
+            <i class="fa fa-universal-access m-3 " (click)="teamRoleDetails(team.id)"></i>
             <i class="fas fa-edit m-3 text-info" aria-hidden="true" (click)="editTeam(team.id)"></i>
             <i class="fas fa-trash-alt m-3 text-danger" aria-hidden="true" (click)="deleteTeam(team.id)"></i>
           </td>
-          <td *ngIf="team.updatable" style="width:15%">
+          <td *ngIf="team.updatable" style="width:30%">
+            <i class="fas fa-save m-3 text-blue" aria-hidden="true" (click)="updateTeam(team)"></i>
+            <i class="fa fa-times m-3 text-danger" (click)="closeEditTeam(team.id)"></i>
+          </td>
+          <td *ngIf="team.isDefault"></td>
+        </tr>
+        <tr *ngIf="!team.isDefault">
+          <td style="width:10%">
+            {{i+1}}
+          </td>
+          <td *ngIf="!team.updatable" style="width:20%">
+            <img src={{team.groupPictureUrl}} style="height:inherit; width:8%;" />
+            {{team.name}}
+          </td>
+          <td *ngIf="team.updatable" style="width:20%">
+            <input pInputText id="teamName" class="p-inputtext-sm" [(ngModel)]="team.name"
+                   placeholder="team name" />
+          </td>
+          <td style="width:20%">
+            {{team.parentTeam}}
+          </td>
+          <td style="width:40%">{{team.displayTime}}</td>
+          <td *ngIf="!team.updatable" style="width:30%">
+            <i *ngIf="!team.isDefault" class="fa fa-user m-3 text-blue" (click)="teamDetails(team.id)"></i>
+            <i class="fa fa-universal-access m-3 " (click)="teamRoleDetails(team.id)"></i>
+            <i *ngIf="!team.isDefault" class="fas fa-edit m-3 text-info" aria-hidden="true" (click)="editTeam(team.id)"></i>
+            <i *ngIf="!team.isDefault" class="fas fa-trash-alt m-3 text-danger" aria-hidden="true" (click)="deleteTeam(team.id)"></i>
+          </td>
+          <td *ngIf="team.updatable" style="width:30%">
             <i class="fas fa-save m-3 text-blue" aria-hidden="true" (click)="updateTeam(team)"></i>
             <i class="fa fa-times m-3 text-danger" (click)="closeEditTeam(team.id)"></i>
           </td>
         </tr>
       </ng-template>
     </p-table>
+    <p-dialog header="Error" [(visible)]="displayError" [style]="{'width': '30vw'}" [baseZIndex]="10000">
+      <p style="color: red;"><strong>{{error}}</strong></p>
+    </p-dialog>
+    <div class="mt-6">
+      <span class="mr-4">
+        <label for="teamName" class="mx-2 text-white">Team Name:</label>
+        <input pInputText id="teamName" class="p-inputtext" [(ngModel)]="createTeamName" placeholder="i.e. xyz" />
+        <span *ngIf="error" class="text-danger font-weight-bold m-2">{{error}}</span>
+        <label class="mx-3 text-white">Select Parent: </label>
+        <p-dropdown appendTo="body" [options]="parentTeamOptions"
+         [(ngModel)]="selectedParent" optionLabel="name">
+        </p-dropdown>
+      </span>
+      <span class="mx-4">
+        <button pButton type="button" class="p-button p-button-help p-button-rounded mt-4" label="Add new team"
+          (click)="createTeam()">
+        </button>
+      </span>
+    </div>
   </div>
 </div>

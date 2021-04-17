@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from 'src/app/services';
 
 @Component({
   selector: 'app-admin-layout',
@@ -6,10 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./admin-layout.component.scss']
 })
 export class AdminLayoutComponent implements OnInit {
-
-  constructor() { }
+  
+  permissionsLoaded: boolean = false;
+  constructor(
+    private readonly userService: UserService
+  ) { }
 
   ngOnInit() {
+    this.userService.getUserPrivilege().subscribe(async permissions => {
+      sessionStorage.setItem("permissions", permissions);
+      this.permissionsLoaded = true;
+    });
     var body = document.getElementsByTagName("body")[0];
     body.classList.add("bg-default");
   }

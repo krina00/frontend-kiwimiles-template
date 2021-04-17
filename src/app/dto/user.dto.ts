@@ -1,6 +1,7 @@
 export class UserDTO {
   name!: string;
   email!: string;
+  profilePictureUrl ?: string;
   role?: 'SUDO' | 'USER';
   gender?: 'MALE' | 'FEMALE' | 'NON BINARY' | 'UNKNOWN';
   mfaMethod?: 'NONE' | 'TOTP' | 'EMAIL' | 'SMS';
@@ -22,6 +23,7 @@ export class DisplayUserDTO {
   contactNo?: string;
   status?: 'Active' | 'Inactive';
   createdOn?: string;
+  displayTime ?: string; 
   updatable: boolean; 
 }
 

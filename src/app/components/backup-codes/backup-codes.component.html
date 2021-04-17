@@ -1,0 +1,21 @@
+<h3 style="text-align:left"></h3>
+<div class="px-4">
+  <div style="float: right;">
+    <i class="fa fa-clone mr-4" aria-hidden="true" style= "font-size: larger;" (click)="copyCodes()"
+    pTooltip="Copy to clipboard" tooltipPosition="bottom"></i>
+    <i class="fa fa-download" aria-hidden="true" style= "font-size: larger;" (click)="dynamicDownloadTxt()"
+    pTooltip="Download" tooltipPosition="bottom"></i>
+  </div>
+  <br/>
+  <div class="row">
+    <div class="col-md-6 text-left">
+      <div *ngFor="let backupcode of backupCodes; let i = index" id="id">
+      {{i + 1}}. {{backupcode}}
+      <br/>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

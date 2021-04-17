@@ -1,90 +1,70 @@
 import { HttpClient, HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import * as CryptoJS from 'crypto-js';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError} from 'rxjs';
+import { environment } from '../environment/environment';
+import { AuthenticationService } from '../../src/app/services/authentication.service'
 import { catchError } from 'rxjs/operators';
-import { environment } from '../environments/environment';
-import { AuthenticationService } from './services/authentication.service';
+import { Router } from '@angular/router';
 
 const API_URL = environment.API_URL;
-
 @Injectable()
-export class JwtInterceptor implements HttpInterceptor {
+export class myJwtInterceptor implements HttpInterceptor {
   constructor( 
-    private authenticationService: AuthenticationService,
+    private router: Router,
     private jwtHelper: JwtHelperService,
     private http: HttpClient,
-    private router: Router
+    private authenticationService: AuthenticationService
   ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // add authorization header with jwt token if available
-    if (request.body !== null) {
-      if (request.body.flag !== undefined && request.body.flag === 'refresh') {
-        const token = localStorage.getItem("refreshToken");
-        request = request.clone({
-          setHeaders: {
-            roll: CryptoJS.AES.decrypt(localStorage.getItem('roll'), environment.JWT_SECRET).toString(CryptoJS.enc.Utf8),
-            id: localStorage.getItem('id'),
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        return next.handle(request).pipe(
-          catchError((error) => {
-            this.authenticationService.logout().subscribe();
-            this.router.navigate(['login']);
-            throw 'session timed out!';
-          })
-        );
-      }
-    }
-    if (request.headers.get('content-type') !== null) {
-      const token = localStorage.getItem("token");
-      if (token/* && !this.jwtHelper.isTokenExpired(localStorage.getItem('token'))*/) {
-        request = request.clone({
-          setHeaders: {
-            roll: CryptoJS.AES.decrypt(localStorage.getItem('roll'), environment.JWT_SECRET).toString(CryptoJS.enc.Utf8),
-            id: localStorage.getItem('id'),
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      }
-      else {
-        this.authenticationService.logout().subscribe();
-      }
-
-      return next.handle(request)
-        .pipe(
-          catchError((error: HttpErrorResponse) => {
-
-            this.http.post(API_URL + '/api/auth/refresh', { flag: 'refresh' }).subscribe((data: any) => {
-              localStorage.setItem('token', data.access_token)
-              const token = localStorage.getItem("token");
-              request = request.clone({
-                setHeaders: {
-                  roll: CryptoJS.AES.decrypt(localStorage.getItem('roll'), environment.JWT_SECRET).toString(CryptoJS.enc.Utf8),
-                  id: localStorage.getItem('id'),
-                  Authorization: `Bearer ${token}`,
-                },
-              });
-              return next.handle(request);
-            });
-            return throwError(error);
-          })
-        );
+    const token: string = request.headers.get('Authorization');
+    if(!token) return next.handle(request);
+    var retrievedToken: string;  
+    if(token.indexOf('Bearer') > -1) {
+      retrievedToken = token.replace('Bearer ', '');
     }
     else {
-      const token = localStorage.getItem("token");
-      request = request.clone({
-        setHeaders: {
-          roll: CryptoJS.AES.decrypt(localStorage.getItem('roll'), environment.JWT_SECRET).toString(CryptoJS.enc.Utf8),
-          id: localStorage.getItem('id'),
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return next.handle(request);
+      retrievedToken = token;
     }
+    if((retrievedToken == 'null') || (token && this.jwtHelper.isTokenExpired(retrievedToken))){
+      const refreshToken: string = localStorage.getItem("refreshToken");
+      this.http.post(API_URL + '/auth/refresh', { 'token': refreshToken })
+        .subscribe((data: any) => {
+        const accessToken = data?.accessToken;
+        const refreshToken = data?.refreshToken;
+        if(!accessToken) this.authenticationService.logout().subscribe();
+        localStorage.setItem("token", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem('refreshTrial', '1');
+        request = request.clone({
+          setHeaders: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        return next.handle(request);
+      },
+      error => {
+        this.authenticationService.logout().subscribe();
+      });
+    }
+    else return next.handle(request);
+    return next.handle(request)
+        .pipe(
+          catchError((error: HttpErrorResponse) => {
+            if(error.status == 401){
+              var trial: number = +localStorage.getItem('refreshTrial');
+              if(trial > 0){
+                trial = trial-1;
+                localStorage.setItem('refreshTrial', trial.toString())
+                history.go(0);
+              }
+              else {
+                this.router.navigate(['/session-timeout']);
+                return throwError(error);
+              }
+            }
+          })
+        );
   }
 }

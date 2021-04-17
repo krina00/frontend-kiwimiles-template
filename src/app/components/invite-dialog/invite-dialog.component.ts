@@ -13,6 +13,8 @@ export class InviteDialogComponent implements OnInit {
   private createMember: CreateMemberDTO = { name: null, email: null, role: "MEMBER" };
   private teamId: number;
   private roles: DropdownDTO[];
+  private validationError: string;
+  private serverError: string;
 
   constructor(
     private config: DynamicDialogConfig,
@@ -43,17 +45,27 @@ export class InviteDialogComponent implements OnInit {
     ]
   }
 
-  addMember(): void {
-    this.teamService.addMember(this.teamId, this.createMember.email, this.createMember.name,
-      this.createMember.role).subscribe(() => { this.closeDialog(true) },
-        err => {
-          this.closeDialog(false);
-          console.error('user cannot be created');
-        });
+  private addMember(): void {
+    if(this.isValid()){
+      this.teamService.addMember(this.teamId, this.createMember.email, this.createMember.name,
+        this.createMember.role).subscribe(
+          () => { this.closeDialog(true) },
+          err => {
+            this.closeDialog(false);
+          });
+    }
   }
 
-  closeDialog(successFlag: boolean) {
+  private closeDialog(successFlag: boolean) {
     this.ref.close(successFlag);
+  }
+
+  private isValid(): boolean{
+    if(!this.createMember.email){
+      this.validationError = "Email is required"
+      return false;
+    }
+    return true;
   }
 }
 

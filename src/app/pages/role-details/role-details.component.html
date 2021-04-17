@@ -1,0 +1,117 @@
+
+<div class="header bg-gradient-danger py-7 py-lg-8">
+    <div class="container">
+      <div class="header-body text-center mb-7">
+        <div class="row justify-content-center">
+          <div class="col-lg-5 col-md-6">
+            <h2 class="text-white">{{roleName}}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container mt--8 pb-5">
+    <div class="row justify-content-center">
+
+      <p-table *ngIf="!scopes" styleClass="p-datatable-striped">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>
+              <center>No permissions given</center>
+            </th>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <p-table *ngIf="scopes && selectAll" [value]="scopes" styleClass="p-datatable-striped">
+        <ng-template pTemplate="header">
+          <tr>
+            <th colspan="3">
+              <center style="font-size: larger">{{roleName}} Permissions</center>
+              <label class="ml-4" style="float: right;">Update Permissions</label>
+              <label class="switch" style="float: right;">
+                <input type="checkbox" [(ngModel)]="selectAll" checked>
+                <span class="slider round"></span>
+              </label>
+            </th>
+          </tr>
+          <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">Permissions</th>
+            <th class="text-center">
+              <span class = "mr-4">Select all</span> 
+              <p-checkbox binary = "true" [(ngModel)]="isGrantAllPermissions" 
+              (onChange) = "selectAllPermissions()"></p-checkbox>
+            </th>
+          </tr>
+        </ng-template>
+  
+        <ng-template pTemplate="body" let-scope let-i="rowIndex">
+          <tr>
+            <td class="text-center">{{i+1}}</td>
+            <td class="text-center">
+              {{scope.privileges}}
+            </td>
+            <td class="text-center">
+              <p-checkbox binary = "true" [(ngModel)]="scope.isGiven"></p-checkbox>
+            </td>
+          </tr>
+        </ng-template>
+  
+      </p-table>
+
+      <p-table #scopesdt *ngIf="!selectAll" [value]="permittedScopesToDisplay" 
+        styleClass="p-datatable-striped"
+        [lazy]="true" (onLazyLoad)="loadScopes(scopesdt)" 
+        [paginator]="true" [rows]="numberOfRowsPerPage" [totalRecords]="totalRecords">
+        <ng-template pTemplate="header">
+          <tr>
+            <th colspan="2">
+              <center style="font-size: larger">{{roleName}} Permissions</center>
+              <p-dropdown appendTo="body" [options]="numberOfRowsPerPageOptions" 
+              (onChange) = "loadScopes(scopesdt)" [(ngModel)]="numberOfRowsPerPage" 
+              optionLabel="rows" optionValue="rows" class="ml-6">
+              </p-dropdown>
+              <label class="ml-4" style="float: right;">Update Permissions</label>
+              <label class="switch" style="float: right;">
+                <input type="checkbox" [(ngModel)]="selectAll" checked>
+                <span class="slider round"></span>
+              </label>
+            </th>
+          </tr>
+          <tr *ngIf="!permittedScopesToDisplay || permittedScopesToDisplay.length == 0">
+            <th colspan="2">
+              <center>No permissions given</center>
+            </th>
+          </tr>
+          <tr *ngIf="permittedScopesToDisplay && permittedScopesToDisplay.length > 0">
+            <th class="text-center">#</th>
+            <th class="text-center">Permissions</th>
+            <!-- <th class="text-center">Action</th> -->
+          </tr>
+        </ng-template>
+  
+        <ng-template pTemplate="body" let-scope let-i="rowIndex">
+          <tr> 
+            <td class="text-center">{{i+1}}</td>
+            <td class="text-center">
+              {{scope.privileges}}
+            </td>
+          </tr>
+        </ng-template>
+  
+      </p-table>
+      <p-dialog header="Error" [(visible)]="displayError" [style]="{'width': '30vw'}" [baseZIndex]="10000">
+        <p style="color: red;"><strong>{{error}}</strong></p>
+      </p-dialog>
+      <div class="mt-4">
+        <span class="mr-4">
+          <button *ngIf ="selectAll" pButton type="button" class="p-button p-button-help p-button-rounded"
+                  label="Update" (click)="updateRoleScopes()">
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+  

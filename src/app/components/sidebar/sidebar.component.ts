@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { PermissionService } from 'src/app/services/permission.service';
 import { AuthenticationService, UserService } from '../../services';
 
 declare interface RouteInfo {
@@ -9,9 +10,10 @@ declare interface RouteInfo {
   class: string;
 }
 export const SUDO_ROUTES: RouteInfo[] = [
-  { path: '/admin/dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },
-  { path: '/admin/users', title: 'All Users', icon: 'pi pi-users text-blue font-weight-bold', class: '' },    
+  //{ path: '/admin/dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },
+  { path: '/admin/users', title: 'All Users', icon: 'pi pi-users text-indigo font-weight-bold', class: '' },    
   { path: '/admin/all-teams', title: 'All Teams', icon: 'fa fa-users text-green', class: '' },
+  { path: '/admin/all-roles', title: 'All Roles', icon: 'fa fa-tasks text-orange', class: '' },
 ];
 
 export const ROUTES: RouteInfo[] = [
@@ -21,7 +23,7 @@ export const ROUTES: RouteInfo[] = [
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss']
+  styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
 
@@ -31,23 +33,32 @@ export class SidebarComponent implements OnInit {
   constructor(
     private router: Router,
     private userService: UserService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private permissionService: PermissionService
   ) { }
 
   async ngOnInit() {
-    const userDetails = await this.userService.getUserProfile().toPromise();
-    if (userDetails.role == 'SUDO') {
-      this.menuItems = SUDO_ROUTES.filter(menuItem => menuItem);
-      this.router.events.subscribe((event) => {
-        this.isCollapsed = true;
-      });
+    if(this.permissionService.checkPermission("Read user details")) {
+      const userDetails = await this.userService.getUserProfile().toPromise();
+      if (userDetails.role == 'SUDO') {
+        this.menuItems = SUDO_ROUTES.filter(menuItem => menuItem);
+        this.router.events.subscribe((event) => {
+          this.isCollapsed = true;
+        });
+      }
+      else if (userDetails.role == 'USER') {
+        this.menuItems = ROUTES.filter(menuItem => menuItem);
+        this.router.events.subscribe((event) => {
+          this.isCollapsed = true;
+        });
+      }
     }
-    else if (userDetails.role == 'USER') {
+    else {
       this.menuItems = ROUTES.filter(menuItem => menuItem);
       this.router.events.subscribe((event) => {
         this.isCollapsed = true;
       });
-    }
+    } 
   }
 
   async logout() {

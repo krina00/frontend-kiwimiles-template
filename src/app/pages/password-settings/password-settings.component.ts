@@ -4,6 +4,7 @@ import { QRCodeComponent } from '../../components/qr-code/qr-code.component';
 import { SmsOTPDialogComponent } from '../../components/sms-otp-dialog/sms-otp-dialog.component';
 import { EmailOTPDialogComponent } from '../../components/email-otp-dialog/email-otp-dialog.component';
 import { AuthenticationService } from '../../services';
+import { BackupCodeComponent } from 'src/app/components/backup-codes/backup-codes.component';
 
 @Component({
   selector: 'app-password-settings',
@@ -17,6 +18,7 @@ export class PasswordSettingsComponent implements OnInit {
   @Input() twoFactorType: 'TOTP' | 'SMS' | 'EMAIL';
   @Output() successFlagEmitter = new EventEmitter<boolean>();
   errorMessage: string;
+  backupCodes: string[];
 
   constructor(
     private config: DynamicDialogConfig,
@@ -96,7 +98,8 @@ export class PasswordSettingsComponent implements OnInit {
     this.showQr = false;
     if (otpCode) {
       this.authenticationService.sendTotp(otpCode).subscribe((backupCodes) => {
-        console.log(backupCodes);
+        this.backupCodes = backupCodes;
+        this.showBackupCodes();
         this.errorMessage = null;
         this.successFlagEmitter.emit(true);
       }, (err) => {
@@ -112,7 +115,8 @@ export class PasswordSettingsComponent implements OnInit {
   private sendSmsOtp(otpCode: number): void {
     if (otpCode) {
       this.authenticationService.sendSmsOtp(otpCode).subscribe((backupCodes) => {
-        console.log(backupCodes);
+        this.backupCodes = backupCodes;
+        this.showBackupCodes();
         this.errorMessage = null;
         this.successFlagEmitter.emit(true);
       }, (err) => {
@@ -128,7 +132,8 @@ export class PasswordSettingsComponent implements OnInit {
   private sendEmailOtp(otpCode: number): void {
     if (otpCode) {
       this.authenticationService.sendEmailOtp(otpCode).subscribe((backupCodes) => {
-        console.log(backupCodes);
+        this.backupCodes = backupCodes;
+        this.showBackupCodes();
         this.errorMessage = null;
         this.successFlagEmitter.emit(true);
       }, (err) => {
@@ -139,6 +144,18 @@ export class PasswordSettingsComponent implements OnInit {
     else {
       this.successFlagEmitter.emit(false);
     }
+  }
+
+  private showBackupCodes(): void{
+    const ref = this.dialogService.open(BackupCodeComponent, {
+      data: {
+        backupCodes: this.backupCodes
+      },
+      header: 'Save these one time backup codes for future logins',
+      width: '20%',
+    });
+
+    ref.onClose.subscribe();
   }
 }
 

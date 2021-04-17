@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { WELCOME_TITLE } from 'src/app/static-values';
 
 @Component({
   selector: 'app-registration-confirmation-popup',
@@ -7,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RegistrationConfirmationPopupComponent implements OnInit {
 
+  title: string = WELCOME_TITLE;
   constructor() { }
 
   ngOnInit(): void {

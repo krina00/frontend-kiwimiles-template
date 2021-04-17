@@ -26,6 +26,8 @@ export class TeamDetailsComponent implements OnInit {
   private memberIds: number[];
   private members: MemberDTO[];
   private roles: DropdownDTO[];
+  private error: string;
+  private displayError: boolean = false;
 
   constructor(
     private dialogService: DialogService,
@@ -47,6 +49,10 @@ export class TeamDetailsComponent implements OnInit {
     this.userId = user.id;
     this.teamService.getTeamDetails(this.teamId).subscribe((team: { name: string }) => {
       this.teamName = team.name;
+    },
+    err => { 
+      this.displayError = true;
+      this.error = "Could not load details"
     })
     this.getAllMembers();
     this.setStaticRoles();
@@ -95,7 +101,10 @@ export class TeamDetailsComponent implements OnInit {
     });
 
     ref.onClose.subscribe(async (success: boolean) => {
-      console.log(success ? "add successful" : "add failed");
+      if(!success){
+        this.displayError = true;
+        this.error = "Could not add member"
+      }
       this.getAllMembers();
     });
   }
@@ -103,7 +112,6 @@ export class TeamDetailsComponent implements OnInit {
   getAllMembers(): void {
 
     this.teamService.getAllMembers(this.teamId).subscribe((membersInformation: any[]) => {
-      console.log(membersInformation);
       if (membersInformation && membersInformation.length > 0) {
         this.members = [];
         this.memberIds = [];
@@ -139,9 +147,6 @@ export class TeamDetailsComponent implements OnInit {
         })
 
       }
-      else {
-        console.error('Members of the team ${this.teamName} are not found');
-      }
     })
   }
 
@@ -153,8 +158,11 @@ export class TeamDetailsComponent implements OnInit {
   updateMember(memberId: number): void {
     const index: number = this.members.findIndex(member => member.id == memberId);
     this.teamService.updateMember(this.teamId, memberId, this.members[index].role).subscribe((memberDetails) => {
-      console.log(memberDetails);
       this.getAllMembers();
+    },
+    err => { 
+      this.displayError = true;
+      this.error = "Could not update member"
     });
   }
 
@@ -167,10 +175,17 @@ export class TeamDetailsComponent implements OnInit {
   deleteMember(memberId: number): void {
 
     this.teamService.deleteMember(memberId, this.teamId).subscribe(() => { this.getAllMembers() },
-      err => { console.error('user cannot be deleted') });
+      err => { 
+        this.displayError = true;
+        this.error = "Could not delete member"
+      });
   }
 
-  dateToString(dateObj: string): string {
+  private goBack(){
+    history.back();
+  }
+
+  private dateToString(dateObj: string): string {
     var dateString: string;
     var date: string = dateObj.split('T')[0];
     var time: string = dateObj.split('T')[1];

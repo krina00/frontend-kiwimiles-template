@@ -10,6 +10,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { EmailOTPDialogComponent } from '../../components/email-otp-dialog/email-otp-dialog.component';
 import { QRCodeComponent } from '../../components/qr-code/qr-code.component';
+import { BackupCodeComponent } from '../../components/backup-codes/backup-codes.component';
 import { SmsOTPDialogComponent } from '../../components/sms-otp-dialog/sms-otp-dialog.component';
 import { ChangePasswordComponent } from '../../pages/changepassword/changepassword.component';
 import { ResetPasswordComponent } from '../../pages/resetpassword/resetpassword.component';
@@ -22,6 +23,12 @@ import { RegisterComponent } from '../../pages/register/register.component';
 import { AuthLayoutRoutes } from './auth-layout.routing';
 import { PasswordResetPopupComponent } from '../../pages/password-reset-popup/password-reset-popup.component';
 import { RegistrationConfirmationPopupComponent } from 'src/app/pages/registration-confirmation-popup/registration-confirmation-popup.component';
+import { LoginOAuthComponent } from 'src/app/pages/login-oauth/login-oauth.component';
+import { TooltipModule } from 'primeng/tooltip';
+import { VerifyEmailComponent } from 'src/app/pages/verify-email/verify-email.component';
+import { SessionTimeoutComponent } from 'src/app/pages/session-timeout/session-timeout.component';
+import {  RecaptchaModule, RECAPTCHA_SETTINGS, RecaptchaSettings, RecaptchaFormsModule  } from 'ng-recaptcha';
+import { environment } from '../../../environment/environment'
 
 @NgModule({
   imports: [
@@ -34,10 +41,14 @@ import { RegistrationConfirmationPopupComponent } from 'src/app/pages/registrati
     ButtonModule,
     DynamicDialogModule,
     CheckboxModule,
-    DropdownModule
+    DropdownModule,
+    TooltipModule,
+    RecaptchaModule,
+    RecaptchaFormsModule,
   ],
   declarations: [
     LoginComponent,
+    LoginOAuthComponent,
     MultiFactorLoginComponent,
     RegisterComponent,
     EmailNotificationComponent,
@@ -46,10 +57,21 @@ import { RegistrationConfirmationPopupComponent } from 'src/app/pages/registrati
     ResetPasswordComponent,
     PasswordSettingsComponent,
     QRCodeComponent,
+    BackupCodeComponent,
     SmsOTPDialogComponent,
     EmailOTPDialogComponent,
     PasswordResetPopupComponent,
-    RegistrationConfirmationPopupComponent
+    RegistrationConfirmationPopupComponent,
+    VerifyEmailComponent,
+    SessionTimeoutComponent
+  ],
+  providers:[
+    {
+      provide: RECAPTCHA_SETTINGS,
+      useValue: {
+        siteKey: environment.CLIENT_SIDE_SITE_KEY,
+      } as RecaptchaSettings,
+    }
   ],
   exports: [
     ChangePasswordComponent

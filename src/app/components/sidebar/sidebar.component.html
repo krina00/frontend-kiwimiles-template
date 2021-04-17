@@ -7,7 +7,7 @@
     </button>
     <!-- Brand -->
     <a class="navbar-brand pt-0" routerLinkActive="active" [routerLink]="['/dashboard']">
-      <img src="./assets/img/brand/sample-brand.png" class="navbar-brand-img" alt="logo">
+      <img src="./assets/img/brand/kiwimiles-logo.png" class="navbar-brand-img" alt="logo">
     </a>
     <!-- User -->
     <ul class="nav align-items-center d-md-none">
@@ -90,7 +90,7 @@
       <!-- Navigation -->
       <ul class="navbar-nav">
         <li *ngFor="let menuItem of menuItems" class="{{menuItem.class}} nav-item">
-          <a routerLinkActive="active" [routerLink]="[menuItem.path]" class="nav-link">
+          <a routerLinkActive="active-fonts" [routerLink]="[menuItem.path]" class="nav-link">
             <i class="ni {{menuItem.icon}}"></i>
             {{menuItem.title}}
           </a>

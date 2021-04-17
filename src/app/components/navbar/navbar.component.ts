@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { PermissionService } from 'src/app/services/permission.service';
 import { AuthenticationService, UserService } from '../../services';
 import { ROUTES } from '../sidebar/sidebar.component';
 
@@ -13,28 +14,38 @@ export class NavbarComponent implements OnInit {
   public focus;
   public listTitles: any[];
   public location: Location;
-  private userName: string;
-  constructor(location: Location,
+  private userName: string = 'unknown';
+  private userProfilePicture: string = 'assets/img/theme/default-profile-icon.png'; 
+  constructor(
+    location: Location,
     private element: ElementRef,
-    private router: Router,
-    private userService: UserService,
-    private authenticationService: AuthenticationService
+    private readonly router: Router,
+    private readonly userService: UserService,
+    private readonly authenticationService: AuthenticationService,
+    private readonly permissionService: PermissionService
   ) {
     this.location = location;
   }
 
   ngOnInit() {
     this.listTitles = ROUTES.filter(listTitle => listTitle);
-    this.userService.getUserProfile().subscribe(userDetails => {
-      if (!userDetails) {
-        console.log('user details not found!');
-      }
-      else {
-        this.userName = userDetails.name ? userDetails.name : 'unknown';
-      }
-    });
-
+    if(this.permissionService.checkPermission("Read user details")) {
+      this.userService.getUserProfile().subscribe(userDetails => {
+        if (!userDetails) {
+          console.log('user details not found!');
+        }
+        else {
+          this.userName = userDetails.name ? userDetails.name : 'unknown';
+          this.userProfilePicture = userDetails.profilePictureUrl
+        }
+      });
+    }
   }
+
+  checkPermissions(operation: string) {
+    return this.permissionService.checkPermission(operation);
+  }
+
   getTitle() {
     var title = this.location.prepareExternalUrl(this.location.path());
     if (title.charAt(0) === '#') {

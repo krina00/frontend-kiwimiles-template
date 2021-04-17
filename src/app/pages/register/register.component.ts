@@ -3,7 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { User } from '../../user';
-import { MINIMUM_PASSWORD_LENGTH } from '../../static-values'
+import { MINIMUM_PASSWORD_LENGTH, WELCOME_TITLE } from '../../static-values'
+import { throwError } from 'rxjs';
 
 
 @Component({
@@ -13,10 +14,13 @@ import { MINIMUM_PASSWORD_LENGTH } from '../../static-values'
 })
 export class RegisterComponent implements OnInit {
 
+  title: string = WELCOME_TITLE;
   registrationForm: FormGroup;
+  passwordStrength: string;
   submitted = false;
   active = true;
   user: User;
+  error: string;
 
   constructor(private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -29,15 +33,15 @@ export class RegisterComponent implements OnInit {
       name: ['', Validators.required],
       email: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(MINIMUM_PASSWORD_LENGTH)]],
-      confirmPassword: ['', Validators.required],
+      confirmPassword: [''],
     }, {
       validator: this.mustMatch('password', 'confirmPassword')
     });
   }
+
   get f() { return this.registrationForm.controls; }
 
-
-  mustMatch(controlName: string, matchingControlName: string) {
+  private mustMatch(controlName: string, matchingControlName: string) {
     return (formGroup: FormGroup) => {
       const control = formGroup.controls[controlName];
       const matchingControl = formGroup.controls[matchingControlName];
@@ -54,12 +58,10 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  onSubmit() {
-    console.log('in submit')
+  private onSubmit() {
     this.submitted = true;
 
     if (this.registrationForm.invalid) {
-      console.log('invalid data');
       return;
     }
     this.user = {
@@ -69,8 +71,49 @@ export class RegisterComponent implements OnInit {
     }
     this.authenticationService.register(this.user).subscribe(()=>{
       this.router.navigate(['/registration-completion-window']);
+    },
+    error => {
+      if (error.status == 409) {
+        this.error = "This user has already been registered";
+      }
+      else {
+        this.error = "Signup Error";
+      }
     });
     this.active = false;
+  }
+
+  private signUpWithGoogle(): void {
+    this.authenticationService.loginWithGoogle()
+     .subscribe(response => {
+      location.href = response.url;
+     },
+     error => {
+        throwError(error);
+     });
+  }
+
+  private signUpWithFacebook(): void {
+    this.authenticationService.loginWithFacebook()
+    .subscribe(response => {
+      location.href = response.url;
+    },
+    error => {
+      throwError(error);
+    });
+  }
+
+  private checkPassword(){
+    const password: string = this.registrationForm.value.password;
+    if(!password){
+      this.passwordStrength = null;
+      return;
+    }
+    const strongPasswordRegex: RegExp = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+    const mediumPasswordRegex: RegExp = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+    if(password.match(strongPasswordRegex)) this.passwordStrength = "strong";
+    else if(password.match(mediumPasswordRegex)) this.passwordStrength = "medium";
+    else this.passwordStrength = "weak";
   }
 
 }

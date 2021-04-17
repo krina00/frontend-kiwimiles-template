@@ -44,7 +44,6 @@ export class PeekUserComponent implements OnInit {
 
   async getUserProfile() {
     const userDetails = await this.sudoService.getUserProfile(this.userId).toPromise();
-    console.log(userDetails);
     if (!userDetails) {
       console.log('user details not found!');
     }
@@ -52,6 +51,7 @@ export class PeekUserComponent implements OnInit {
       this.user = {
         name: userDetails.name,
         email: null,
+        profilePictureUrl: userDetails.profilePictureUrl,
         role: userDetails.role,
         gender: userDetails.gender,
         mfaMethod: userDetails.twoFactorMethod,

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ERR_USER_NOT_FOUND } from 'src/app/errors/error.constants';
 import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
@@ -29,7 +30,7 @@ export class ResetPasswordComponent implements OnInit {
 
     ngOnInit() {
         this.resetPasswordForm = this.formBuilder.group({
-            newPassword: ['', [Validators.required, Validators.minLength(6)]],
+            newPassword: ['', [Validators.required, Validators.minLength(8)]],
             confirmPassword: ['', Validators.required],
         }, {
             validator: this.mustMatch('newPassword', 'confirmPassword')
@@ -39,19 +40,19 @@ export class ResetPasswordComponent implements OnInit {
 
     onSubmit() {
         this.submitted = true;
-        if (this.resetPasswordForm.invalid) {
-            console.error('Invalid Data');
-        }
-        else {
+        if (!this.resetPasswordForm.invalid) {
             this.authenticationService.resetPassword(this.resetPasswordForm.value.newPassword, this.tokenRetrived)
             .subscribe(
                 () => { 
-                    console.log('after reset')
                     this.router.navigate(['/password-reset-window']);
                  },
                 error => {
-                    this.error = error;
-                    console.error(error);
+                    if (error.status == 404) {
+                        this.error = ERR_USER_NOT_FOUND;
+                    }
+                    else {
+                        this.error = "Couldn't reset the password";
+                    }
                 }
             );
         }

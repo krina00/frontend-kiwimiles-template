@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
-import { ADMIN, OWNER, MEMBER} from '../constants/permissions.constant';
+import { throwError } from 'rxjs';
+import { ADMIN, OWNER, MEMBER, PERMISSIONS} from '../constants/permissions.constant';
 import { BaseService } from './base.service';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PermissionService extends BaseService {
+export class PermissionService {
 
-  hasPermission(role: string, operation: string): boolean {
+  private permissions: string[];
+  constructor(
+    private readonly userService: UserService
+  ){}
+  
+  hasPermission(role: string, operation: string): boolean { //obsolete
     if (role == 'SUDO') {
       return true;
     }
@@ -27,6 +34,30 @@ export class PermissionService extends BaseService {
       }
     }
     return false;
+  }
+
+  checkPermission(operation: string): boolean {     //now in use
+    var scope: string;
+    PERMISSIONS.forEach(permission => {
+      if(permission.label == operation){
+        scope = permission.scope;
+        return;
+      }
+    });
+    if(!scope) throwError("scope entry is not found with availble entries");
+
+    var permissions = sessionStorage.getItem("permissions");
+    if(!permissions) return false;
+    if(permissions.indexOf('*') > -1 && permissions.length == 1) return true; 
+    return ((permissions.indexOf(scope)>-1) ? true : false);
+  }
+
+  setPermissions(permissions: string[]): void {
+    this.permissions = permissions;
+  }
+
+  getPermissions(): string[] {
+    return this.permissions;
   }
 
 }

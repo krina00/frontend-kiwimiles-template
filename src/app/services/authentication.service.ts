@@ -1,9 +1,10 @@
 import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { from, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { User } from '../user';
 import { BaseService } from './base.service';
+import { environment } from "../../environment/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,55 @@ export class AuthenticationService extends BaseService {
     return httpOptions;
   }
 
+  loginWithGoogle() {
+    return from (
+      fetch(
+        this.API_URL + '/auth/google',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+          mode: 'cors',
+          redirect: 'manual'
+        }
+      ));
+  }
+
+  loginWithFacebook() {
+    return from (
+      fetch(
+        this.API_URL + '/auth/facebook',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+          mode: 'cors',
+          redirect: 'manual'
+        }
+      ));
+  }
+
+  // captchaResponse(response: string): void{
+  //   const secret:string = environment.SERVER_SIDE_CAPTCHA_SECRET;
+  //   const URL: string = 
+  //   `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${response}`;
+  //   fetch(
+  //     URL,
+  //     {
+  //       headers: {
+  //         'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+  //       },
+  //       method: 'POST',
+  //       mode: 'no-cors',
+  //     }
+  //   ).then(res => {
+  //     console.log(res); 
+  //     return JSON.parse(JSON.stringify(res))})
+  //   .then(data => console.log(data));
+  // }
+
   login(user: User): Observable<any> {
     return this.http.post(this.API_URL + '/auth/login', user, this.getHttpOptions())
       .pipe(
@@ -36,6 +86,7 @@ export class AuthenticationService extends BaseService {
             localStorage.setItem('token', res.accessToken);
             localStorage.setItem('refreshToken', res.refreshToken);
             localStorage.removeItem('totpToken');
+            localStorage.setItem('refreshTrial', '1');
             return { accessToken: res.accessToken };
           }
           else if (res.multiFactorRequired) {
@@ -66,6 +117,7 @@ export class AuthenticationService extends BaseService {
             localStorage.setItem('token', res.accessToken);
             localStorage.setItem('refreshToken', res.refreshToken);
             localStorage.removeItem('totpToken');
+            localStorage.setItem('refreshTrial', '1');
             return { accessToken: res.accessToken };
           }
           else {
@@ -80,6 +132,8 @@ export class AuthenticationService extends BaseService {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('id');
+    localStorage.setItem('refreshTrial', '0');
+    sessionStorage.clear();
     return this.http.post(this.API_URL + '/auth/logout', { token: token }, this.getHttpOptions());
   }
 
@@ -92,6 +146,7 @@ export class AuthenticationService extends BaseService {
           if (res) {
             localStorage.setItem('token', res.accessToken);
             localStorage.setItem('refreshToken', res.refreshToken);
+            localStorage.setItem('refreshTrial', '1');
             return { accessToken: res.accessToken };
           }
           else {
@@ -102,8 +157,11 @@ export class AuthenticationService extends BaseService {
   }
 
   register(user: User): Observable<any> {
-    console.log(user);
     return this.http.post(this.API_URL + '/auth/register', user, this.getHttpOptions());
+  }
+
+  emailVerification(token: string): Observable<any> {
+    return this.http.post(this.API_URL + '/auth/verify-email', {token: token}, this.getHttpOptions());
   }
 
   passwordSet(user: User): Observable<any> {
@@ -153,6 +211,4 @@ export class AuthenticationService extends BaseService {
   disable2FA(): Observable<any> {
     return this.http.delete(this.API_URL + `/users/userId/multi-factor-authentication`, this.getHttpOptions())
   }
-
-
 }
