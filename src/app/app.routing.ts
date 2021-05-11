@@ -29,6 +29,21 @@ const routes: Routes = [
     ]
   },
   {
+    path: 'user',
+    component: AdminLayoutComponent,
+    canActivate: [AuthGuard],
+    data: {
+      roleCode: 'user'
+    },
+
+    children: [
+      {
+        path: '',
+        loadChildren: './layouts/user-layout/user-layout.module#UserLayoutModule',
+      }
+    ]
+  },
+  {
     path: '',
     component: AuthLayoutComponent,
     children: [

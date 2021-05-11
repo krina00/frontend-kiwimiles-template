@@ -14,10 +14,11 @@ export const SUDO_ROUTES: RouteInfo[] = [
   { path: '/admin/users', title: 'All Users', icon: 'pi pi-users text-indigo font-weight-bold', class: '' },    
   { path: '/admin/all-teams', title: 'All Teams', icon: 'fa fa-users text-green', class: '' },
   { path: '/admin/all-roles', title: 'All Roles', icon: 'fa fa-tasks text-orange', class: '' },
+  { path: '/admin/user-location', title: 'User Location', icon: 'fa fa-users text-green', class: '' },
 ];
 
-export const ROUTES: RouteInfo[] = [
-  { path: '/admin/dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },
+export const USER_ROUTES: RouteInfo[] = [
+  { path: '/user/dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },
 ];
 
 @Component({
@@ -47,14 +48,14 @@ export class SidebarComponent implements OnInit {
         });
       }
       else if (userDetails.role == 'USER') {
-        this.menuItems = ROUTES.filter(menuItem => menuItem);
+        this.menuItems = USER_ROUTES.filter(menuItem => menuItem);
         this.router.events.subscribe((event) => {
           this.isCollapsed = true;
         });
       }
     }
     else {
-      this.menuItems = ROUTES.filter(menuItem => menuItem);
+      this.menuItems = USER_ROUTES.filter(menuItem => menuItem);
       this.router.events.subscribe((event) => {
         this.isCollapsed = true;
       });

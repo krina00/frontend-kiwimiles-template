@@ -1,7 +1,4 @@
 import { Routes } from '@angular/router';
-import { AllRolesComponent } from 'src/app/pages/all-roles/all-roles.component';
-import { RoleDetailsComponent } from 'src/app/pages/role-details/role-details.component';
-import { TeamRolesComponent } from 'src/app/pages/team-roles/team-roles.component';
 import { GeolocationComponent } from 'src/app/pages/geolocation/geolocation.component';
 import { AllTeamsComponent } from '../../pages/all-teams/all-teams.component';
 import { UsersComponent } from '../../pages/all-users/users.component';
@@ -15,7 +12,7 @@ import { TeamsComponent } from '../../pages/teams/teams.component';
 import { UserProfileComponent } from '../../pages/user-profile/user-profile.component';
 
 
-export const AdminLayoutRoutes: Routes = [
+export const UserLayoutRoutes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'user-profile', component: UserProfileComponent },
   { path: 'users', component: UsersComponent },
@@ -25,11 +22,7 @@ export const AdminLayoutRoutes: Routes = [
   { path: 'password-settings', component: ChangePasswordComponent },
   { path: 'teams', component: TeamsComponent },
   { path: 'teams/:role/:teamId', component: TeamDetailsComponent },
-  { path: 'team-roles/:teamId', component: TeamRolesComponent },
-  { path: 'roles/:roleId', component: RoleDetailsComponent },
   { path: 'all-teams', component: AllTeamsComponent },
-  { path: 'all-roles', component: AllRolesComponent},
   { path: 'user-location', component: GeolocationComponent },
   
-  //{ path: 'maps', component: MapsComponent }
 ];

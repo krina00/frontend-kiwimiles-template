@@ -67,6 +67,15 @@ import { CalendarModule } from 'primeng/calendar';
     RoleDetailsComponent,
     AllRolesComponent
   ],
+  exports: [
+    DashboardComponent,
+    UserProfileComponent,
+    TablesComponent,
+    IconsComponent,
+    TeamsComponent,
+    TeamDetailsComponent,
+    InviteDialogComponent
+  ]
 })
 
 export class AdminLayoutModule {}

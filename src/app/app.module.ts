@@ -16,6 +16,8 @@ import { ComponentsModule } from './components/components.module';
 import { myJwtInterceptor } from './jwt.interceptor';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { GeolocationComponent } from './pages/geolocation/geolocation.component';
+import { UserLayoutComponent } from './layouts/user-layout/user-layout.component';
 
 const JWT_Module_Options: JwtModuleOptions = {
   config: {
@@ -45,7 +47,9 @@ const JWT_Module_Options: JwtModuleOptions = {
   declarations: [
     AppComponent,
     AdminLayoutComponent,
-    AuthLayoutComponent
+    AuthLayoutComponent,
+    UserLayoutComponent,
+    GeolocationComponent
   ],
   providers: [
     {

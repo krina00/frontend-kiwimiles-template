@@ -3,7 +3,7 @@ import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PermissionService } from 'src/app/services/permission.service';
 import { AuthenticationService, UserService } from '../../services';
-import { ROUTES } from '../sidebar/sidebar.component';
+import { USER_ROUTES } from '../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-navbar',
@@ -28,7 +28,7 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.listTitles = ROUTES.filter(listTitle => listTitle);
+    this.listTitles = USER_ROUTES.filter(listTitle => listTitle);
     if(this.permissionService.checkPermission("Read user details")) {
       this.userService.getUserProfile().subscribe(userDetails => {
         if (!userDetails) {
